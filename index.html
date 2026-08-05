@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panorama Cloud · Prueba 1.1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="page">
+    <section class="brand-panel">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">◒</span>
+        <span>Panorama</span>
+      </div>
+
+      <div class="brand-copy">
+        <p class="eyebrow">CLOUD · SEGUNDA PRUEBA</p>
+        <h1>Tu primer dato guardado en la nube.</h1>
+        <p>
+          Ahora cada usuario puede guardar una frase personal.
+          Supabase identifica a quién pertenece y la recupera al iniciar sesión.
+        </p>
+      </div>
+
+      <p class="version">Prueba Cloud 1.1</p>
+    </section>
+
+    <section class="content-panel">
+      <div id="loadingView" class="card centered">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Comprobando la sesión…</p>
+      </div>
+
+      <div id="configView" class="card hidden">
+        <p class="eyebrow">CONFIGURACIÓN PENDIENTE</p>
+        <h2>Conecta tu proyecto de Supabase</h2>
+        <p class="muted">
+          Copia en <code>config.js</code> la misma URL y clave pública
+          que utilizaste en la versión 1.0.
+        </p>
+      </div>
+
+      <div id="authView" class="card hidden">
+        <div class="tabs" role="tablist">
+          <button id="loginTab" class="tab active" type="button">Ingresar</button>
+          <button id="registerTab" class="tab" type="button">Crear cuenta</button>
+        </div>
+
+        <div class="heading">
+          <p class="eyebrow">BIENVENIDO</p>
+          <h2 id="formTitle">Inicia sesión</h2>
+          <p id="formDescription" class="muted">
+            Usa el correo y la contraseña de tu cuenta.
+          </p>
+        </div>
+
+        <form id="authForm">
+          <div id="nameGroup" class="field hidden">
+            <label for="name">Nombre</label>
+            <input id="name" type="text" autocomplete="name"
+                   placeholder="Nacho" maxlength="60">
+          </div>
+
+          <div class="field">
+            <label for="email">Correo electrónico</label>
+            <input id="email" type="email" autocomplete="email"
+                   placeholder="nombre@correo.com" required>
+          </div>
+
+          <div class="field">
+            <label for="password">Contraseña</label>
+            <input id="password" type="password" autocomplete="current-password"
+                   placeholder="Mínimo 6 caracteres" minlength="6" required>
+          </div>
+
+          <button id="submitButton" class="primary-button" type="submit">
+            Ingresar
+          </button>
+        </form>
+
+        <p id="authMessage" class="message hidden" role="status"></p>
+      </div>
+
+      <div id="welcomeView" class="card welcome-card hidden">
+        <div class="session-header">
+          <div>
+            <p class="eyebrow">SESIÓN INICIADA</p>
+            <h2>¡Hola, <span id="userName">usuario</span>!</h2>
+            <p class="muted">Ya podemos guardar tu primer dato cloud.</p>
+          </div>
+          <div class="success-icon" aria-hidden="true">✓</div>
+        </div>
+
+        <div class="session-info">
+          <span>Cuenta</span>
+          <strong id="userEmail"></strong>
+        </div>
+
+        <div class="cloud-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">BASE DE DATOS</p>
+              <h3>Mi frase personal</h3>
+            </div>
+            <span id="cloudStatus" class="cloud-status">Sin consultar</span>
+          </div>
+
+          <form id="phraseForm">
+            <label for="phrase">Escribe una frase</label>
+            <textarea id="phrase" maxlength="250"
+              placeholder="El ahorro también es un ingreso."></textarea>
+
+            <div class="counter-row">
+              <span id="charCounter">0 / 250</span>
+              <button id="savePhraseButton" class="primary-button compact"
+                      type="submit">
+                Guardar en la nube
+              </button>
+            </div>
+          </form>
+
+          <p id="phraseMessage" class="message hidden" role="status"></p>
+
+          <div id="savedPhraseBox" class="saved-phrase hidden">
+            <span>Frase guardada</span>
+            <blockquote id="savedPhrase"></blockquote>
+            <small id="savedAt"></small>
+          </div>
+        </div>
+
+        <button id="logoutButton" class="secondary-button" type="button">
+          Cerrar sesión
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
