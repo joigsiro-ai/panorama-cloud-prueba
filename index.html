@@ -9,7 +9,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/panorama-icon.svg" />
   <link rel="apple-touch-icon" href="assets/panorama-icon-192.png" />
   <link rel="manifest" href="manifest.webmanifest" />
-  <title>Panorama · Cloud 0.4.6.1</title>
+  <title>Panorama · Cloud 0.4.6.2</title>
   <style>
     :root{
       --bg:#f4f6f8;--card:#fff;--text:#18212f;--muted:#6b7280;--line:#e5e7eb;
@@ -1139,7 +1139,7 @@
       <section class="card">
         <span class="danger-zone-eyebrow">Acerca de Panorama</span>
         <h3 style="margin:8px 0 6px">Panorama Vision</h3>
-        <p style="margin:0;color:var(--muted)">Cloud 0.4.6.1 · Account Group UX</p>
+        <p style="margin:0;color:var(--muted)">Cloud 0.4.6.2 · Account Flow Fix</p>
       </section>
       <section class="card danger-zone-card">
         <div class="danger-zone-content">
@@ -1197,7 +1197,7 @@
 
 <script type="module">
 import { supabase, hasSupabaseConfig } from "./src/supabase.js";
-  const PANORAMA_BUILD="Cloud 0.4.6.1 · Account Group UX";
+  const PANORAMA_BUILD="Cloud 0.4.6.2 · Account Flow Fix";
 
 (async () => {
   // Panorama Cloud 0.4: Supabase is the only persistent data store.
@@ -1843,9 +1843,8 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
   function movementAccountId(m){return m?.accountId||""}
   function movementMatchesAccountFilter(m,accountId){
     if(!accountId||accountId==="all")return true;
-    // El asiento de entrada de una transferencia pertenece a la cuenta destino,
-    // pero no se muestra al filtrar esa cuenta: el filtro representa ORIGEN.
-    if(isTransferMovement(m)&&m.transferRole==="in")return false;
+    // Desde 0.4.6 las transferencias tienen doble asiento. Cada asiento pertenece
+    // a su cuenta real: salida en origen, entrada en destino.
     return movementAccountId(m)===accountId;
   }
   function accountForMovement(m){return accountById(movementAccountId(m))}
@@ -2095,12 +2094,19 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       const badge=st==="paid"?"badge-paid":st==="partial"?"badge-partial":"badge-pending";
       const label=st==="paid"?"Pagado":st==="partial"?"Pago parcial":"Pendiente";
       const pending=isIncome?0:Math.max(0,m.amount-m.paidAmount);
+      const accountGrouped=extraClass.includes("account-child-row");
+      const accountIncoming=isIncome?Number(m.amount||0):0;
+      const accountOutgoing=!isIncome?Number(m.paidAmount||0):0;
+      const accountNet=roundMoney(accountIncoming-accountOutgoing);
+      const moneyCells=accountGrouped
+        ? `<td class="amount">${currencyMoney(accountIncoming,m.currency)}</td><td class="amount">${currencyMoney(accountOutgoing,m.currency)}</td><td class="amount ${accountNet>0?"positive":accountNet<0?"negative":""}">${accountNet>0?"+":""}${currencyMoney(accountNet,m.currency)}</td>`
+        : `<td class="amount">${currencyMoney(m.amount,m.currency)}</td><td class="amount">${currencyMoney(m.paidAmount,m.currency)}</td><td class="amount">${currencyMoney(pending,m.currency)}</td>`;
       return `<tr class="${st==="paid"&&!isIncome?"row-paid":""} ${extraClass}">
         <td><input class="row-selector" type="checkbox" data-id="${m.id}" ${selectedIds.has(m.id)?"checked":""}></td>
         <td>${prettyDate(m.date)}</td><td><div class="movement-description"><div class="movement-description-title">${escapeHtml(m.description)}</div><div class="movement-description-meta">${categoryMarkup(m)}</div></div></td>
         <td><span class="badge ${isIncome?"badge-income":"badge-expense"}">${isIncome?"Ingreso":"Gasto"}</span></td>
         <td><span class="badge ${badge}">${label}</span></td>
-        <td class="amount">${currencyMoney(m.amount,m.currency)}</td><td class="amount">${currencyMoney(m.paidAmount,m.currency)}</td><td class="amount">${currencyMoney(pending,m.currency)}</td>
+        ${moneyCells}
         <td class="actions actions-col">
           <details class="actions-menu movement-row-actions">
             <summary title="Acciones" aria-label="Acciones para ${escapeHtml(m.description)}">⋯</summary>
@@ -2153,7 +2159,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
         const token=`${currentMonth}|${key}`,safeKey=encodeURIComponent(key),isOpen=expandedAccountGroups.has(token);
         const accountName=g.account?.name||"Sin cuenta",currency=g.account?.currency||g.items[0]?.currency||"UYU";
         const incoming=roundMoney(g.items.filter(m=>m.type==="income").reduce((n,m)=>n+Number(m.amount||0),0));
-        const outgoing=roundMoney(g.items.filter(m=>m.type==="expense").reduce((n,m)=>n+Number(m.amount||0),0));
+        const outgoing=roundMoney(g.items.filter(m=>m.type==="expense").reduce((n,m)=>n+Number(m.paidAmount||0),0));
         const net=roundMoney(incoming-outgoing);
         const allSelected=g.items.every(m=>selectedIds.has(m.id));
         const netClass=net>0?"positive":net<0?"negative":"";
