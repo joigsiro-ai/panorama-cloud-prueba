@@ -2078,17 +2078,13 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
     // "Saldo actual" refleja el efectivo real del mes por moneda: ingresos cobrados
     // menos salidas debitadas. En pagos de tarjeta se usa amount/currency (cuenta),
     // mientras que en "Pagado" se usa appliedAmount/appliedCurrency (obligación).
-    const balances={...incomesByCurrency};
-    cashMonthData.filter(m=>m.type==="expense"&&!isCardActivity(m)&&m.operationType!=="transfer").forEach(m=>{
-      const cur=m.currency||"UYU";
-      balances[cur]=roundMoney((balances[cur]||0)-Number(m.paidAmount||0));
-    });
-    cashMonthData.filter(m=>m.operationType==="transfer").forEach(m=>{
-      const sourceCur=m.currency||accountById(m.accountId)?.currency||"UYU";
-      const destinationCur=m.destinationCurrency||accountById(m.destinationAccountId)?.currency||sourceCur;
-      balances[sourceCur]=roundMoney((balances[sourceCur]||0)-Number(m.amount||0));
-      balances[destinationCur]=roundMoney((balances[destinationCur]||0)+Number(m.destinationAmount||0));
-    });
+    // "Disponible real hoy" es la posición real de TODAS las cuentas hasta hoy.
+    // No se reconstruye desde el flujo del mes: accountBalance() aplica ambas patas
+    // de los traspasos internos (salida de origen + entrada en destino) y evita que
+    // una transferencia entre cuentas propias reduzca artificialmente el disponible.
+    const now=new Date();
+    const todayIso=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+    const balances=groupCurrency(accounts,a=>accountBalance(a,todayIso),a=>a.currency);
     $("totalIncome").innerHTML=multiMoneyHtml(incomesByCurrency);
     $("totalExpenses").innerHTML=multiMoneyHtml(expensesByCurrency);
     $("paidExpenses").innerHTML=multiMoneyHtml(paidByCurrency);
