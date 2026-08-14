@@ -2712,21 +2712,21 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
     const count=Number($("overviewMonths").value||6);
     const months=Array.from({length:count},(_,index)=>addMonths(startMonth,index));
     overviewPageIndex=Math.max(0,Math.min(overviewPageIndex,months.length-1));
-    let accumulated=0;
     let totalIncome=0;
     let totalPaid=0;
     const summaries=months.map(month=>{
-      const data=movements.filter(m=>m.date.startsWith(month));
+      // Flujo refleja actividad económica del mes. Los traspasos internos solo
+      // mueven dinero entre cuentas propias y no deben inflar ingresos ni pagos.
+      const data=movements.filter(m=>m.date.startsWith(month)&&m.operationType!=="transfer");
       const incomes=data.filter(m=>m.type==="income").sort((a,b)=>a.date.localeCompare(b.date));
       const expenses=data.filter(m=>m.type==="expense").sort((a,b)=>a.date.localeCompare(b.date));
       const payments=expenses.filter(m=>Number(m.paidAmount||0)>0);
       const income=incomes.reduce((sum,m)=>sum+Number(m.amount||0),0);
       const paid=expenses.reduce((sum,m)=>sum+Number(m.paidAmount||0),0);
       const result=income-paid;
-      accumulated+=result;
       totalIncome+=income;
       totalPaid+=paid;
-      return {month,incomes,payments,income,paid,result,accumulated};
+      return {month,incomes,payments,income,paid,result};
     });
 
     const periodBalance=totalIncome-totalPaid;
@@ -2746,7 +2746,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
     $("overviewGrid").innerHTML=summaries.map(item=>{
       const incomeRows=item.incomes.length?item.incomes.map(m=>`<div class="overview-movement income"><span class="overview-movement-name" title="${escapeHtml(m.description)}">${escapeHtml(m.description)}</span><span class="overview-movement-value">${money(m.amount)}</span></div>`).join(""):`<div class="overview-empty">Sin ingresos registrados.</div>`;
       const paymentRows=item.payments.length?item.payments.map(m=>`<div class="overview-movement expense"><span class="overview-movement-name" title="${escapeHtml(m.description)}">${escapeHtml(m.description)}</span><span class="overview-movement-value">-${money(Number(m.paidAmount||0))}</span></div>`).join(""):`<div class="overview-empty">Sin pagos realizados.</div>`;
-      return `<article class="month-overview-card ${item.accumulated<0?"is-risk":""}">
+      return `<article class="month-overview-card ${item.result<0?"is-risk":""}">
         <header class="month-overview-header">
           <div class="month-overview-title">${monthLabel(item.month)}</div>
           <button class="month-overview-open no-print" type="button" onclick="overviewApp.openMonth('${item.month}')">Ver mes →</button>
@@ -2756,9 +2756,8 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
           <div><div class="overview-group-title"><span>Pagos</span><span>${money(item.paid)}</span></div>${paymentRows}</div>
         </div>
         <footer class="month-overview-footer">
-          <div class="overview-total-row"><span>Saldo real del mes</span><strong class="${item.result>=0?"positive":"negative"}">${money(item.result)}</strong></div>
-          <div class="overview-total-row"><span>Saldo real acumulado</span><strong class="${item.accumulated>=0?"positive":"negative"}">${money(item.accumulated)}</strong></div>
-          ${item.accumulated<0?`<div class="overview-warning">⚠ El saldo real acumulado queda negativo.</div>`:""}
+          <div class="overview-total-row"><span>Resultado del mes</span><strong class="${item.result>=0?"positive":"negative"}">${money(item.result)}</strong></div>
+          ${item.result<0?`<div class="overview-warning">⚠ El resultado del mes queda negativo.</div>`:""}
         </footer>
       </article>`;
     }).join("");
