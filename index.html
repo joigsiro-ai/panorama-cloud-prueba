@@ -9,7 +9,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/panorama-icon.svg" />
   <link rel="apple-touch-icon" href="assets/panorama-icon-192.png" />
   <link rel="manifest" href="manifest.webmanifest" />
-  <title>Panorama · Cloud 0.4.6.2</title>
+  <title>Panorama · Cloud 0.4.7</title>
   <style>
     :root{
       --bg:#f4f6f8;--card:#fff;--text:#18212f;--muted:#6b7280;--line:#e5e7eb;
@@ -58,6 +58,21 @@
     .recurring-list{isolation:isolate}
     @media(max-width:640px){.recurring-row-actions .actions-popover{position:fixed;left:14px;right:14px;top:auto;bottom:78px;width:auto}}
     @media(max-width:640px){.recurring-item{grid-template-columns:minmax(0,1fr) auto}.recurring-amount{grid-column:1}.recurring-actions{grid-column:2;grid-row:1 / span 2}}
+    .recurring-list-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+    .recurring-list-head h2{margin:0}
+    .recurring-batch-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;margin-bottom:12px;border:1px solid var(--line);border-radius:14px;background:var(--soft);flex-wrap:wrap}
+    .recurring-batch-toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .recurring-batch-item{grid-template-columns:auto minmax(0,1fr) minmax(120px,160px)}
+    .recurring-batch-check{display:flex;align-items:center;justify-content:center}
+    .recurring-batch-check input{width:18px;height:18px}
+    .recurring-batch-amount{display:grid;gap:5px}
+    .recurring-batch-amount label{font-size:.72rem;color:var(--muted);font-weight:800}
+    .recurring-batch-amount input{width:100%;padding:10px 11px}
+    .recurring-batch-item.is-unselected{opacity:.55}
+    .recurring-batch-footer{position:sticky;bottom:12px;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:13px 14px;border:1px solid var(--line);border-radius:15px;background:var(--card);box-shadow:0 12px 30px rgba(15,23,42,.14);flex-wrap:wrap}
+    .recurring-batch-summary{font-weight:850}
+    .recurring-batch-footer-actions{display:flex;gap:8px;flex-wrap:wrap}
+    @media(max-width:640px){.recurring-batch-item{grid-template-columns:auto minmax(0,1fr)}.recurring-batch-amount{grid-column:1 / -1}.recurring-batch-footer,.recurring-batch-footer-actions{width:100%}.recurring-batch-footer-actions .btn{flex:1}}
     .home-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:20px}
     .home-stack{display:grid;gap:20px}
     .hero-card{background:linear-gradient(135deg,#111827,#1f2937);color:#fff;border-radius:26px;padding:28px;box-shadow:0 20px 50px rgba(15,23,42,.25);transition:background .25s ease,transform .2s ease}
@@ -901,9 +916,26 @@
       </section>
 
       <section class="card">
-        <h2>Gastos recurrentes</h2>
+        <div class="recurring-list-head">
+          <h2>Gastos recurrentes</h2>
+          <button class="btn btn-primary" type="button" id="startRecurringBatchBtn">＋ Agregar recurrentes al mes</button>
+        </div>
+        <div id="recurringBatchToolbar" class="recurring-batch-toolbar" hidden>
+          <strong id="recurringBatchMonthLabel"></strong>
+          <div class="recurring-batch-toolbar-actions">
+            <button class="btn" type="button" id="selectAllRecurringBatchBtn">Seleccionar todos</button>
+            <button class="btn" type="button" id="clearRecurringBatchBtn">Quitar selección</button>
+          </div>
+        </div>
         <div id="recurringList" class="recurring-list"></div>
         <div id="recurringEmpty" class="empty" hidden>No hay gastos recurrentes cargados.</div>
+        <div id="recurringBatchFooter" class="recurring-batch-footer" hidden>
+          <div id="recurringBatchSummary" class="recurring-batch-summary">0 seleccionados</div>
+          <div class="recurring-batch-footer-actions">
+            <button class="btn" type="button" id="cancelRecurringBatchBtn">Cancelar</button>
+            <button class="btn btn-primary" type="button" id="confirmRecurringBatchBtn">Agregar al mes</button>
+          </div>
+        </div>
       </section>
     </div>
   </section>
@@ -1139,7 +1171,7 @@
       <section class="card">
         <span class="danger-zone-eyebrow">Acerca de Panorama</span>
         <h3 style="margin:8px 0 6px">Panorama Vision</h3>
-        <p style="margin:0;color:var(--muted)">Cloud 0.4.6.2 · Account Flow Fix</p>
+        <p style="margin:0;color:var(--muted)">Cloud 0.4.7 · Recurrentes por lote</p>
       </section>
       <section class="card danger-zone-card">
         <div class="danger-zone-content">
@@ -1197,7 +1229,7 @@
 
 <script type="module">
 import { supabase, hasSupabaseConfig } from "./src/supabase.js";
-  const PANORAMA_BUILD="Cloud 0.4.6.2 · Account Flow Fix";
+  const PANORAMA_BUILD="Cloud 0.4.7 · Recurrentes por lote";
 
 (async () => {
   // Panorama Cloud 0.4: Supabase is the only persistent data store.
@@ -1412,6 +1444,9 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
   let categories = [];
   let movements = [];
   let recurringExpenses = [];
+  let recurringBatchMode=false;
+  let recurringBatchSelection=new Set();
+  let recurringBatchAmounts=new Map();
   let creditCards = [];
   let accounts = [];
   let cardMonths = [];
@@ -2740,12 +2775,58 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
 
   function updateRecurringPaymentFields(){if(!$("recurringPaymentMethod"))return;const isCard=$("recurringPaymentMethod").value==="card";$("recurringCardRow").hidden=!isCard;$("recurringCard").innerHTML=creditCards.length?creditCards.map(c=>`<option value="${c.id}">${escapeHtml(c.name)} · ${escapeHtml(c.bank)}</option>`).join(""):`<option value="">Primero creá una tarjeta</option>`}
 
+  function recurringAddedToMonth(itemId,month){
+    return movements.some(m=>m.sourceRecurringId===itemId&&((m.purchaseDate||m.date||"").slice(0,7)===month));
+  }
+
+  function recurringBatchCurrency(item){
+    if(item.paymentMethod==="card")return cardById(item.cardId)?.currency||"UYU";
+    return defaultAccount()?.currency||"UYU";
+  }
+
+  function updateRecurringBatchSummary(){
+    if(!recurringBatchMode)return;
+    const selected=[...recurringBatchSelection];
+    const totals={};
+    selected.forEach(id=>{
+      const item=recurringExpenses.find(x=>x.id===id);
+      if(!item)return;
+      const currency=recurringBatchCurrency(item);
+      totals[currency]=roundMoney((totals[currency]||0)+Number(recurringBatchAmounts.get(id)??item.amount??0));
+    });
+    const totalText=Object.entries(totals).map(([currency,value])=>currencyMoney(value,currency)).join(" · ");
+    $("recurringBatchSummary").textContent=`${selected.length} seleccionado${selected.length===1?"":"s"}${totalText?` · Total: ${totalText}`:""}`;
+    $("confirmRecurringBatchBtn").disabled=selected.length===0;
+  }
+
   function renderRecurring(){
     const month=$("monthFilter").value||currentMonth;
     const items=[...recurringExpenses].sort((a,b)=>a.description.localeCompare(b.description,"es"));
+    $("startRecurringBatchBtn").hidden=recurringBatchMode||items.length===0;
+    $("recurringBatchToolbar").hidden=!recurringBatchMode;
+    $("recurringBatchFooter").hidden=!recurringBatchMode;
+    if(recurringBatchMode)$("recurringBatchMonthLabel").textContent=`Preparando recurrentes para ${monthLabel(month)}`;
     $("recurringList").innerHTML=items.map(item=>{
       const category=categoryById(item.categoryId)||{icon:"📦",name:item.category||"Otros",color:"#64748b"};
-      const added=movements.some(m=>m.sourceRecurringId===item.id&&((m.purchaseDate||m.date||"").slice(0,7)===month));
+      const added=recurringAddedToMonth(item.id,month);
+      if(recurringBatchMode){
+        const checked=recurringBatchSelection.has(item.id);
+        const amount=Number(recurringBatchAmounts.get(item.id)??item.amount??0);
+        return `
+        <div class="recurring-item recurring-batch-item ${checked?"":"is-unselected"}">
+          <div class="recurring-batch-check"><input class="recurring-batch-checkbox" type="checkbox" data-id="${item.id}" ${checked?"checked":""}></div>
+          <div class="recurring-main">
+            <div class="recurring-name" title="${escapeHtml(item.description)}">${escapeHtml(item.description)}</div>
+            <div class="recurring-category"><span class="category-dot" style="background:${category.color}"></span> ${escapeHtml(category.icon)} ${escapeHtml(category.name)}</div>
+            ${item.paymentMethod==="card"?`<div class="recurring-category">💳 ${escapeHtml(creditCards.find(c=>c.id===item.cardId)?.name||"Tarjeta no disponible")}</div>`:""}
+            ${added?`<span class="recurring-added">✓ Ya agregado a ${monthLabel(month)} · podés volver a agregarlo</span>`:""}
+          </div>
+          <div class="recurring-batch-amount">
+            <label>Importe para ${monthLabel(month)}</label>
+            <input class="recurring-batch-amount-input" data-id="${item.id}" type="number" min="0.01" step="0.01" value="${amount}" ${checked?"":"disabled"}>
+          </div>
+        </div>`;
+      }
       return `
       <div class="recurring-item">
         <div class="recurring-main">
@@ -2767,8 +2848,19 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       </div>`;
     }).join("");
     $("recurringEmpty").hidden=items.length>0;
+    if(recurringBatchMode){
+      document.querySelectorAll(".recurring-batch-checkbox").forEach(el=>el.addEventListener("change",e=>{
+        const id=e.target.dataset.id;
+        if(e.target.checked)recurringBatchSelection.add(id);else recurringBatchSelection.delete(id);
+        renderRecurring();
+      }));
+      document.querySelectorAll(".recurring-batch-amount-input").forEach(el=>el.addEventListener("input",e=>{
+        recurringBatchAmounts.set(e.target.dataset.id,Number(e.target.value||0));
+        updateRecurringBatchSummary();
+      }));
+      updateRecurringBatchSummary();
+    }
   }
-
   function resetRecurringForm(){
     $("recurringForm").reset();
     $("recurringEditId").value="";
@@ -2905,6 +2997,54 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
     $("complete").checked=true;$("paidAmount").value="";$("paymentMethod").value="account";$("movementAccount").value=defaultAccount()?.id||"";$("transferSourceAccount").value=defaultAccount()?.id||"";if(accounts.length>1)$("transferDestinationAccount").value=accounts.find(a=>a.id!==defaultAccount()?.id)?.id||"";$("cardBillingMonth").value=nextMonth(currentMonth);updateMovementCardFields();updateCategories();
   }
 
+  function createMovementFromRecurring(item,month,amount){
+    amount=Number(amount||0);
+    if(!(amount>0))throw new Error(`Indicá un importe válido para “${item.description}”.`);
+    if(item.paymentMethod==="card"){
+      if(!item.cardId||!creditCards.some(c=>c.id===item.cardId))throw new Error(`Seleccioná una tarjeta válida para “${item.description}”.`);
+      const purchaseDate=`${month}-01`,billingMonth=billingMonthForPurchase(cardById(item.cardId),purchaseDate);
+      return createCardMovement({cardId:item.cardId,description:item.description,amount,billingMonth,purchaseDate,origin:"recurring",sourceRecurringId:item.id,categoryId:item.categoryId});
+    }
+    const category=categoryById(item.categoryId)||categories.find(c=>c.type==="expense");
+    const account=defaultAccount();
+    return {id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),type:"expense",description:item.description,amount,date:`${month}-01`,categoryId:category?.id||"",category:category?.name||item.category||"Otros",paid:false,complete:false,paidAmount:0,accountId:account?.id||"",currency:account?.currency||"UYU",paymentMethod:"account",carriedTo:[],sourceRecurringId:item.id};
+  }
+
+  function stopRecurringBatch(){
+    recurringBatchMode=false;
+    recurringBatchSelection.clear();
+    recurringBatchAmounts.clear();
+    renderRecurring();
+  }
+
+  $("startRecurringBatchBtn").addEventListener("click",()=>{
+    recurringBatchMode=true;
+    recurringBatchSelection=new Set(recurringExpenses.map(x=>x.id));
+    recurringBatchAmounts=new Map(recurringExpenses.map(x=>[x.id,Number(x.amount||0)]));
+    renderRecurring();
+  });
+  $("selectAllRecurringBatchBtn").addEventListener("click",()=>{recurringBatchSelection=new Set(recurringExpenses.map(x=>x.id));renderRecurring()});
+  $("clearRecurringBatchBtn").addEventListener("click",()=>{recurringBatchSelection.clear();renderRecurring()});
+  $("cancelRecurringBatchBtn").addEventListener("click",stopRecurringBatch);
+  $("confirmRecurringBatchBtn").addEventListener("click",async()=>{
+    const month=$("monthFilter").value||currentMonth;
+    const selected=[...recurringBatchSelection];
+    if(!selected.length)return;
+    const invalid=selected.find(id=>!(Number(recurringBatchAmounts.get(id))>0));
+    if(invalid){alert("Todos los recurrentes seleccionados deben tener un importe mayor a cero.");return}
+    try{
+      const generated=selected.map(id=>{
+        const item=recurringExpenses.find(x=>x.id===id);
+        if(!item)throw new Error("No se encontró uno de los recurrentes seleccionados.");
+        return createMovementFromRecurring(item,month,recurringBatchAmounts.get(id));
+      });
+      movements.push(...generated);
+      await saveData();
+      stopRecurringBatch();
+      render();
+    }catch(error){alert(error?.message||"No se pudieron agregar los recurrentes al mes.")}
+  });
+
   window.recurringApp={
     addToMonth(id){
       const item=recurringExpenses.find(x=>x.id===id);
@@ -2912,7 +3052,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       const month=$("monthFilter").value||currentMonth;
       const already=movements.some(m=>m.sourceRecurringId===id&&((m.purchaseDate||m.date||"").slice(0,7)===month));
       if(already&&!confirm(`“${item.description}” ya fue agregado a ${monthLabel(month)}. ¿Querés agregarlo nuevamente?`))return;
-      if(item.paymentMethod==="card"){if(!item.cardId||!creditCards.some(c=>c.id===item.cardId)){alert("Seleccioná una tarjeta válida para este débito automático.");return}const purchaseDate=`${month}-01`,billingMonth=billingMonthForPurchase(cardById(item.cardId),purchaseDate);movements.push(createCardMovement({cardId:item.cardId,description:item.description,amount:Number(item.amount||0),billingMonth,purchaseDate,origin:"recurring",sourceRecurringId:item.id,categoryId:item.categoryId}));saveData()}else{const category=categoryById(item.categoryId)||categories.find(c=>c.type==="expense");const account=defaultAccount();movements.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),type:"expense",description:item.description,amount:Number(item.amount||0),date:`${month}-01`,categoryId:category?.id||"",category:category?.name||item.category||"Otros",paid:false,complete:false,paidAmount:0,accountId:account?.id||"",currency:account?.currency||"UYU",paymentMethod:"account",carriedTo:[],sourceRecurringId:item.id});saveData()}
+      try{movements.push(createMovementFromRecurring(item,month,item.amount));saveData()}catch(error){alert(error?.message||"No se pudo agregar el recurrente.");return}
       render();renderRecurring();
     },
     edit(id){
