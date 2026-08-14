@@ -9,7 +9,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/panorama-icon.svg" />
   <link rel="apple-touch-icon" href="assets/panorama-icon-192.png" />
   <link rel="manifest" href="manifest.webmanifest" />
-  <title>Panorama · Cloud 0.4.6</title>
+  <title>Panorama · Cloud 0.4.6.1</title>
   <style>
     :root{
       --bg:#f4f6f8;--card:#fff;--text:#18212f;--muted:#6b7280;--line:#e5e7eb;
@@ -402,7 +402,7 @@
     .card-month-grid label,.installment-form label{display:grid;gap:6px;font-weight:800;font-size:.82rem}
     .computed-box{border:1px solid var(--border);background:var(--surface-2);border-radius:16px;padding:14px;display:grid;gap:9px}
     .computed-row{display:flex;justify-content:space-between;gap:16px}.computed-row strong{font-variant-numeric:tabular-nums}.computed-row.total{border-top:1px solid var(--border);padding-top:10px;font-size:1.05rem}
-    .installment-form{display:grid;grid-template-columns:1.35fr .55fr 1fr 1fr 1.15fr auto;gap:12px;align-items:start}.installment-form .installment-mode{grid-column:1/3}.installment-form .installment-amount{grid-column:3/4}.installment-form .installment-submit{align-self:end;margin-bottom:1px;min-height:42px}.installment-form .hint{font-weight:500;line-height:1.35}.installment-form-intro{margin:4px 0 16px;color:var(--muted);font-size:.88rem}.installment-calculation{grid-column:1/-1;display:flex;gap:22px;align-items:center;flex-wrap:wrap;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface-soft);font-size:.86rem}.installment-calculation strong{color:var(--accent)}.group-category-toggle{margin-right:auto!important;color:var(--text)!important;font-weight:700!important;cursor:pointer}.group-category-toggle input{width:auto;accent-color:var(--accent)}.budget-group-toggles{display:flex;align-items:center;gap:18px;margin-right:auto;flex-wrap:wrap}.account-group-row{background:color-mix(in srgb,var(--surface) 90%,#0ea5e9 10%)}.account-group-toggle{border:0;background:none;color:var(--text);font:inherit;font-weight:800;cursor:pointer;text-align:left}.account-group-meta{color:var(--muted);font-size:.78rem;font-weight:600;margin-left:7px}.account-child-row td:nth-child(3){padding-left:30px}.category-group-selector{width:16px!important;height:16px!important;min-width:16px;padding:0!important;margin:0;vertical-align:middle;accent-color:var(--accent)}.category-group-row{background:color-mix(in srgb,var(--surface) 88%,var(--accent) 12%)}.category-group-toggle{border:0;background:none;color:var(--text);font:inherit;font-weight:800;cursor:pointer;text-align:left}.category-group-meta{color:var(--muted);font-size:.78rem;font-weight:600;margin-left:7px}.category-child-row td:nth-child(3){padding-left:30px}
+    .installment-form{display:grid;grid-template-columns:1.35fr .55fr 1fr 1fr 1.15fr auto;gap:12px;align-items:start}.installment-form .installment-mode{grid-column:1/3}.installment-form .installment-amount{grid-column:3/4}.installment-form .installment-submit{align-self:end;margin-bottom:1px;min-height:42px}.installment-form .hint{font-weight:500;line-height:1.35}.installment-form-intro{margin:4px 0 16px;color:var(--muted);font-size:.88rem}.installment-calculation{grid-column:1/-1;display:flex;gap:22px;align-items:center;flex-wrap:wrap;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface-soft);font-size:.86rem}.installment-calculation strong{color:var(--accent)}.group-category-toggle{margin-right:auto!important;color:var(--text)!important;font-weight:700!important;cursor:pointer}.group-category-toggle input{width:auto;accent-color:var(--accent)}.budget-group-toggles{display:flex;align-items:center;gap:18px;margin-right:auto;flex-wrap:wrap}.account-group-row{background:color-mix(in srgb,var(--surface) 90%,#0ea5e9 10%)}.account-group-toggle{border:0;background:none;color:var(--text);font:inherit;font-weight:800;cursor:pointer;text-align:left}.account-group-meta{color:var(--muted);font-size:.78rem;font-weight:600;margin-left:7px}.account-flow-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800}.account-group-row .positive strong{color:#059669}.account-group-row .negative strong{color:#dc2626}.account-child-row td:nth-child(3){padding-left:30px}.category-group-selector,.account-group-selector{width:16px!important;height:16px!important;min-width:16px!important;min-height:16px!important;margin:0!important;vertical-align:middle;accent-color:var(--accent)}.category-group-selector{width:16px!important;height:16px!important;min-width:16px;padding:0!important;margin:0;vertical-align:middle;accent-color:var(--accent)}.category-group-row{background:color-mix(in srgb,var(--surface) 88%,var(--accent) 12%)}.category-group-toggle{border:0;background:none;color:var(--text);font:inherit;font-weight:800;cursor:pointer;text-align:left}.category-group-meta{color:var(--muted);font-size:.78rem;font-weight:600;margin-left:7px}.category-child-row td:nth-child(3){padding-left:30px}
     .installment-list{display:grid;gap:9px;margin-top:12px}.installment-item{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:11px 12px;border:1px solid var(--border);border-radius:13px}.installment-actions{display:flex;gap:6px;align-items:center}
     .installment-meta{font-size:.78rem;color:var(--muted);margin-top:2px}
     .budget-credit-card{margin-bottom:16px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
@@ -1139,7 +1139,7 @@
       <section class="card">
         <span class="danger-zone-eyebrow">Acerca de Panorama</span>
         <h3 style="margin:8px 0 6px">Panorama Vision</h3>
-        <p style="margin:0;color:var(--muted)">Cloud 0.4.6 · Presupuesto + Transferencias</p>
+        <p style="margin:0;color:var(--muted)">Cloud 0.4.6.1 · Account Group UX</p>
       </section>
       <section class="card danger-zone-card">
         <div class="danger-zone-content">
@@ -1197,7 +1197,7 @@
 
 <script type="module">
 import { supabase, hasSupabaseConfig } from "./src/supabase.js";
-  const PANORAMA_BUILD="Cloud 0.4.6 · Presupuesto + Transferencias";
+  const PANORAMA_BUILD="Cloud 0.4.6.1 · Account Group UX";
 
 (async () => {
   // Panorama Cloud 0.4: Supabase is the only persistent data store.
@@ -2151,13 +2151,14 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       });
       regularRows=[...groups.entries()].map(([key,g])=>{
         const token=`${currentMonth}|${key}`,safeKey=encodeURIComponent(key),isOpen=expandedAccountGroups.has(token);
-        const total=g.items.reduce((n,m)=>n+Number(m.amount||0),0);
-        const paid=g.items.reduce((n,m)=>n+(m.type==="income"?Number(m.amount||0):Number(m.paidAmount||0)),0);
-        const pending=g.items.reduce((n,m)=>n+(m.type==="expense"?Math.max(0,Number(m.amount||0)-Number(m.paidAmount||0)):0),0);
-        const types=new Set(g.items.map(m=>m.type)),typeLabel=types.size===1?(types.has("income")?"Ingreso":"Gasto"):"Mixto";
         const accountName=g.account?.name||"Sin cuenta",currency=g.account?.currency||g.items[0]?.currency||"UYU";
+        const incoming=roundMoney(g.items.filter(m=>m.type==="income").reduce((n,m)=>n+Number(m.amount||0),0));
+        const outgoing=roundMoney(g.items.filter(m=>m.type==="expense").reduce((n,m)=>n+Number(m.amount||0),0));
+        const net=roundMoney(incoming-outgoing);
         const allSelected=g.items.every(m=>selectedIds.has(m.id));
-        const row=`<tr class="account-group-row"><td><input class="account-group-selector" type="checkbox" data-key="${escapeHtml(key)}" ${allSelected?"checked":""}></td><td>—</td><td><button class="account-group-toggle" type="button" onclick="app.toggleAccountGroup('${safeKey}')">${isOpen?"▼":"▶"} 🏦 ${escapeHtml(accountName)} <span class="account-group-meta">${g.items.length} ${g.items.length===1?"movimiento":"movimientos"} · ${escapeHtml(currency)}</span></button></td><td>${typeLabel==="Mixto"?"—":`<span class="badge ${typeLabel==="Ingreso"?"badge-income":"badge-expense"}">${typeLabel}</span>`}</td><td>—</td><td class="amount">${currencyMoney(total,currency)}</td><td class="amount">${currencyMoney(paid,currency)}</td><td class="amount">${currencyMoney(pending,currency)}</td><td class="actions actions-col"><button class="btn btn-small" type="button" onclick="app.toggleAccountGroup('${safeKey}')">${isOpen?"Ocultar":"Ver detalle"}</button></td></tr>`;
+        const netClass=net>0?"positive":net<0?"negative":"";
+        const netSign=net>0?"+":"";
+        const row=`<tr class="account-group-row"><td><input class="account-group-selector" type="checkbox" data-key="${escapeHtml(key)}" ${allSelected?"checked":""}></td><td>—</td><td><button class="account-group-toggle" type="button" onclick="app.toggleAccountGroup('${safeKey}')">${isOpen?"▼":"▶"} 🏦 ${escapeHtml(accountName)} <span class="account-group-meta">${g.items.length} ${g.items.length===1?"movimiento":"movimientos"} · ${escapeHtml(currency)}</span></button></td><td>—</td><td>—</td><td class="amount"><span class="account-flow-label">Ingresó</span><br><strong>${currencyMoney(incoming,currency)}</strong></td><td class="amount"><span class="account-flow-label">Salió</span><br><strong>${currencyMoney(outgoing,currency)}</strong></td><td class="amount ${netClass}"><span class="account-flow-label">Neto</span><br><strong>${netSign}${currencyMoney(net,currency)}</strong></td><td class="actions actions-col"><button class="btn btn-small" type="button" onclick="app.toggleAccountGroup('${safeKey}')">${isOpen?"Ocultar":"Ver detalle"}</button></td></tr>`;
         return row+(isOpen?g.items.map(m=>movementRow(m,"account-child-row")).join(""):"");
       }).join("");
     }else regularRows=regularMovements.map(m=>movementRow(m)).join("");
