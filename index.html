@@ -2264,7 +2264,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
 
   function renderExpenseChart(monthData){
     const totals={};
-    cashFlowMovements(monthData).filter(m=>m.type==="expense").forEach(m=>{
+    cashFlowMovements(monthData).filter(m=>m.type==="expense"&&m.operationType!=="transfer").forEach(m=>{
       const c=categoryForMovement(m);totals[c.id||c.name]={label:`${c.icon} ${c.name}`,value:(totals[c.id||c.name]?.value||0)+Number(m.amount||0)};
     });
     const entries=Object.values(totals).sort((a,b)=>b.value-a.value).slice(0,6);
@@ -2462,17 +2462,12 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       pendingByCurrency[cur]=roundMoney(Math.max(0,(expensesByCurrency[cur]||0)-(paidByCurrency[cur]||0)));
     });
 
-    const balances={...incomesByCurrency};
-    cashMonthData.filter(m=>m.type==="expense"&&!isCardActivity(m)&&m.operationType!=="transfer").forEach(m=>{
-      const cur=m.currency||"UYU";
-      balances[cur]=roundMoney((balances[cur]||0)-Number(m.paidAmount||0));
-    });
-    cashMonthData.filter(m=>m.operationType==="transfer").forEach(m=>{
-      const sourceCur=m.currency||accountById(m.accountId)?.currency||"UYU";
-      const destinationCur=m.destinationCurrency||accountById(m.destinationAccountId)?.currency||sourceCur;
-      balances[sourceCur]=roundMoney((balances[sourceCur]||0)-Number(m.amount||0));
-      balances[destinationCur]=roundMoney((balances[destinationCur]||0)+Number(m.destinationAmount||0));
-    });
+    // Disponible real hoy = suma de los saldos reales de todas las cuentas hasta hoy.
+    // accountBalance() procesa cada asiento según la cuenta a la que pertenece, por lo que
+    // las transferencias internas se compensan correctamente (sale de una cuenta y entra en otra).
+    const now=new Date();
+    const todayIso=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+    const balances=groupCurrency(accounts,a=>accountBalance(a,todayIso),a=>a.currency);
 
     // El porcentaje y el mensaje principal usan la moneda de la cuenta predeterminada
     // para no mezclar importes de monedas distintas en una única proporción.
