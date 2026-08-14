@@ -9,7 +9,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/panorama-icon.svg" />
   <link rel="apple-touch-icon" href="assets/panorama-icon-192.png" />
   <link rel="manifest" href="manifest.webmanifest" />
-  <title>Panorama · Cloud 0.4.5.2</title>
+  <title>Panorama · Cloud 0.4.6</title>
   <style>
     :root{
       --bg:#f4f6f8;--card:#fff;--text:#18212f;--muted:#6b7280;--line:#e5e7eb;
@@ -183,7 +183,7 @@
     .partial-summary{font-size:.9rem;font-weight:800;color:#92400e}
     .full{width:100%}.hint{font-size:.82rem;color:var(--muted);line-height:1.4}
     .content-stack{display:grid;gap:20px}
-    .filters{display:grid;grid-template-columns:1.4fr .8fr .8fr;gap:10px;margin-bottom:14px}
+    .filters{display:grid;grid-template-columns:1.25fr .72fr .72fr .9fr;gap:10px;margin-bottom:14px}
     .selection-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding:12px 14px;border:1px solid var(--line);background:var(--surface-soft);border-radius:12px}
     .selection-info{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
     .selection-info strong{font-size:1.05rem}
@@ -402,7 +402,7 @@
     .card-month-grid label,.installment-form label{display:grid;gap:6px;font-weight:800;font-size:.82rem}
     .computed-box{border:1px solid var(--border);background:var(--surface-2);border-radius:16px;padding:14px;display:grid;gap:9px}
     .computed-row{display:flex;justify-content:space-between;gap:16px}.computed-row strong{font-variant-numeric:tabular-nums}.computed-row.total{border-top:1px solid var(--border);padding-top:10px;font-size:1.05rem}
-    .installment-form{display:grid;grid-template-columns:1.35fr .55fr 1fr 1fr 1.15fr auto;gap:12px;align-items:start}.installment-form .installment-mode{grid-column:1/3}.installment-form .installment-amount{grid-column:3/4}.installment-form .installment-submit{align-self:end;margin-bottom:1px;min-height:42px}.installment-form .hint{font-weight:500;line-height:1.35}.installment-form-intro{margin:4px 0 16px;color:var(--muted);font-size:.88rem}.installment-calculation{grid-column:1/-1;display:flex;gap:22px;align-items:center;flex-wrap:wrap;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface-soft);font-size:.86rem}.installment-calculation strong{color:var(--accent)}.group-category-toggle{margin-right:auto!important;color:var(--text)!important;font-weight:700!important;cursor:pointer}.group-category-toggle input{width:auto;accent-color:var(--accent)}.category-group-selector{width:16px!important;height:16px!important;min-width:16px;padding:0!important;margin:0;vertical-align:middle;accent-color:var(--accent)}.category-group-row{background:color-mix(in srgb,var(--surface) 88%,var(--accent) 12%)}.category-group-toggle{border:0;background:none;color:var(--text);font:inherit;font-weight:800;cursor:pointer;text-align:left}.category-group-meta{color:var(--muted);font-size:.78rem;font-weight:600;margin-left:7px}.category-child-row td:nth-child(3){padding-left:30px}
+    .installment-form{display:grid;grid-template-columns:1.35fr .55fr 1fr 1fr 1.15fr auto;gap:12px;align-items:start}.installment-form .installment-mode{grid-column:1/3}.installment-form .installment-amount{grid-column:3/4}.installment-form .installment-submit{align-self:end;margin-bottom:1px;min-height:42px}.installment-form .hint{font-weight:500;line-height:1.35}.installment-form-intro{margin:4px 0 16px;color:var(--muted);font-size:.88rem}.installment-calculation{grid-column:1/-1;display:flex;gap:22px;align-items:center;flex-wrap:wrap;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface-soft);font-size:.86rem}.installment-calculation strong{color:var(--accent)}.group-category-toggle{margin-right:auto!important;color:var(--text)!important;font-weight:700!important;cursor:pointer}.group-category-toggle input{width:auto;accent-color:var(--accent)}.budget-group-toggles{display:flex;align-items:center;gap:18px;margin-right:auto;flex-wrap:wrap}.account-group-row{background:color-mix(in srgb,var(--surface) 90%,#0ea5e9 10%)}.account-group-toggle{border:0;background:none;color:var(--text);font:inherit;font-weight:800;cursor:pointer;text-align:left}.account-group-meta{color:var(--muted);font-size:.78rem;font-weight:600;margin-left:7px}.account-child-row td:nth-child(3){padding-left:30px}.category-group-selector{width:16px!important;height:16px!important;min-width:16px;padding:0!important;margin:0;vertical-align:middle;accent-color:var(--accent)}.category-group-row{background:color-mix(in srgb,var(--surface) 88%,var(--accent) 12%)}.category-group-toggle{border:0;background:none;color:var(--text);font:inherit;font-weight:800;cursor:pointer;text-align:left}.category-group-meta{color:var(--muted);font-size:.78rem;font-weight:600;margin-left:7px}.category-child-row td:nth-child(3){padding-left:30px}
     .installment-list{display:grid;gap:9px;margin-top:12px}.installment-item{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:11px 12px;border:1px solid var(--border);border-radius:13px}.installment-actions{display:flex;gap:6px;align-items:center}
     .installment-meta{font-size:.78rem;color:var(--muted);margin-top:2px}
     .budget-credit-card{margin-bottom:16px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
@@ -749,9 +749,13 @@
           <input id="searchFilter" placeholder="Buscar por descripción..." />
           <select id="typeFilter"><option value="all">Todos los tipos</option><option value="income">Ingresos</option><option value="expense">Gastos</option></select>
           <select id="statusFilter"><option value="all">Todos los estados</option><option value="paid">Pagados</option><option value="partial">Pago parcial</option><option value="pending">Pendientes</option></select>
+          <select id="accountFilter"><option value="all">Todas las cuentas</option></select>
         </div>
         <div class="sort-bar no-print">
-          <label class="group-category-toggle"><input id="groupByCategory" type="checkbox"> <span>Agrupar por categoría</span></label>
+          <div class="budget-group-toggles">
+            <label class="group-category-toggle"><input id="groupByCategory" type="checkbox"> <span>Agrupar por categoría</span></label>
+            <label class="group-category-toggle"><input id="groupByAccount" type="checkbox"> <span>Agrupar por cuenta</span></label>
+          </div>
           <label>
             Ordenar por
             <select id="sortFilter">
@@ -1135,7 +1139,7 @@
       <section class="card">
         <span class="danger-zone-eyebrow">Acerca de Panorama</span>
         <h3 style="margin:8px 0 6px">Panorama Vision</h3>
-        <p style="margin:0;color:var(--muted)">Cloud 0.4.5.2 · Tour Stacking Fix</p>
+        <p style="margin:0;color:var(--muted)">Cloud 0.4.6 · Presupuesto + Transferencias</p>
       </section>
       <section class="card danger-zone-card">
         <div class="danger-zone-content">
@@ -1193,7 +1197,7 @@
 
 <script type="module">
 import { supabase, hasSupabaseConfig } from "./src/supabase.js";
-  const PANORAMA_BUILD="Cloud 0.4.5.2 · Tour Stacking Fix";
+  const PANORAMA_BUILD="Cloud 0.4.6 · Presupuesto + Transferencias";
 
 (async () => {
   // Panorama Cloud 0.4: Supabase is the only persistent data store.
@@ -1362,7 +1366,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
           return;
         }else if(forgotMode){
           if(!email)throw new Error("Ingresá tu correo.");
-          const redirectTo=`${location.origin}${location.pathname}`;
+          const redirectTo=`${window.location.origin}/`;
           const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo});
           if(error)throw error;
           showAuthMessage("Te enviamos un enlace para cambiar la contraseña. Revisá tu correo (y Spam, por las dudas).",false);
@@ -1417,6 +1421,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
   let selectedIds = new Set();
   const expandedCarryGroups = new Set();
   const expandedCategoryGroups=new Set();
+  const expandedAccountGroups=new Set();
   let cloudTheme = null;
   let cloudPreferences = {};
   let cloudDefaultMonth = null;
@@ -1786,9 +1791,14 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
   function accountBalance(account,throughDate="9999-12-31"){
     const defaultId=defaultAccount()?.id;
     const belongsToAccount=m=>m.accountId===account.id||(!m.accountId&&account.id===defaultId&&!m.cardId);
-    const outgoing=movements.filter(m=>belongsToAccount(m)&&String(m.date||"")<=throughDate&&!isCardActivity(m)).reduce((sum,m)=>sum+(m.type==="income"?Number(m.amount||0):-Number(m.paidAmount??m.amount??0)),0);
-    const incomingTransfers=movements.filter(m=>m.operationType==="transfer"&&m.destinationAccountId===account.id&&String(m.date||"")<=throughDate).reduce((sum,m)=>sum+Number(m.destinationAmount||0)*paidRatio(m),0);
-    return roundMoney(outgoing+incomingTransfers)
+    // Los traspasos 0.4.6 ya tienen un asiento de salida y otro de entrada.
+    // Los traspasos heredados conservan una sola fila; para ellos mantenemos
+    // temporalmente el crédito por destinationAccountId.
+    const direct=movements.filter(m=>belongsToAccount(m)&&String(m.date||"")<=throughDate&&!isCardActivity(m))
+      .reduce((sum,m)=>sum+(m.type==="income"?Number(m.amount||0):-Number(m.paidAmount??m.amount??0)),0);
+    const legacyIncoming=movements.filter(m=>m.operationType==="transfer"&&!m.transferRole&&m.destinationAccountId===account.id&&String(m.date||"")<=throughDate)
+      .reduce((sum,m)=>sum+Number(m.destinationAmount||0)*paidRatio(m),0);
+    return roundMoney(direct+legacyIncoming)
   }
 
   function uid(prefix){return crypto.randomUUID?crypto.randomUUID():`${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`}
@@ -1829,8 +1839,27 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
     }
   }
   function categoryById(id){return categories.find(c=>c.id===id)}
-  function categoryForMovement(m){return categoryById(m.categoryId)||categories.find(c=>c.type===m.type&&c.name===m.category)||{name:m.category||"Sin categoría",icon:"📦",color:"#64748b"}}
-  function categoryMarkup(m){const c=categoryForMovement(m);return `<span class="category-chip"><span class="category-dot" style="background:${c.color}"></span><span>${escapeHtml(c.icon)} ${escapeHtml(c.name)}</span></span>`}
+  function isTransferMovement(m){return m?.operationType==="transfer"}
+  function movementAccountId(m){return m?.accountId||""}
+  function movementMatchesAccountFilter(m,accountId){
+    if(!accountId||accountId==="all")return true;
+    // El asiento de entrada de una transferencia pertenece a la cuenta destino,
+    // pero no se muestra al filtrar esa cuenta: el filtro representa ORIGEN.
+    if(isTransferMovement(m)&&m.transferRole==="in")return false;
+    return movementAccountId(m)===accountId;
+  }
+  function accountForMovement(m){return accountById(movementAccountId(m))}
+  function categoryForMovement(m){
+    if(isTransferMovement(m))return {id:"__transfer__",name:"Transferencias",icon:"🔁",color:"#64748b"};
+    return categoryById(m.categoryId)||categories.find(c=>c.type===m.type&&c.name===m.category)||{name:m.category||"Sin categoría",icon:"📦",color:"#64748b"}
+  }
+  function categoryMarkup(m){
+    if(isTransferMovement(m)){
+      const account=accountForMovement(m),role=m.transferRole==="in"?"Entrada":"Salida";
+      return `<span class="category-chip"><span class="category-dot" style="background:#64748b"></span><span>🔁 Transferencia${account?` · ${escapeHtml(account.name)}`:""} · ${role}</span></span>`;
+    }
+    const c=categoryForMovement(m);return `<span class="category-chip"><span class="category-dot" style="background:${c.color}"></span><span>${escapeHtml(c.icon)} ${escapeHtml(c.name)}</span></span>`
+  }
 
   function normalizeMovement(m){
     const amount = Number(m.amount || 0);
@@ -2035,10 +2064,14 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
     const search=$("searchFilter").value.trim().toLowerCase();
     const type=$("typeFilter").value;
     const status=$("statusFilter").value;
+    const accountFilter=$("accountFilter")?.value||"all";
     const sort=$("sortFilter").value;
     const currentMonth=$("monthFilter").value;
     const isCarryMovement=m=>m.type==="expense"&&m.description.trim().toLowerCase().startsWith("saldo anterior:");
     const sortMovements=list=>[...list].sort((a,b)=>{
+      const priority=m=>m.type==="expense"&&statusOf(m)!=="paid"?0:1;
+      const priorityDiff=priority(a)-priority(b);
+      if(priorityDiff!==0)return priorityDiff;
       if(sort==="date-asc") return a.date.localeCompare(b.date);
       if(sort==="amount-desc") return Number(b.amount)-Number(a.amount);
       if(sort==="amount-asc") return Number(a.amount)-Number(b.amount);
@@ -2048,11 +2081,13 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
     });
     const filtered=monthData.filter(m=>!search||m.description.toLowerCase().includes(search))
       .filter(m=>type==="all"||m.type===type)
-      .filter(m=>status==="all"||statusOf(m)===status);
+      .filter(m=>status==="all"||statusOf(m)===status)
+      .filter(m=>movementMatchesAccountFilter(m,accountFilter));
     const carryMovements=sortMovements(filtered.filter(isCarryMovement));
     const regularMovements=sortMovements(filtered.filter(m=>!isCarryMovement(m)));
     const expanded=expandedCarryGroups.has(currentMonth);
     const groupByCategory=!!$("groupByCategory")?.checked;
+    const groupByAccount=!!$("groupByAccount")?.checked;
 
     const movementRow=(m,extraClass="")=>{
       const isIncome=m.type==="income";
@@ -2070,7 +2105,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
           <details class="actions-menu movement-row-actions">
             <summary title="Acciones" aria-label="Acciones para ${escapeHtml(m.description)}">⋯</summary>
             <div class="actions-popover">
-              ${!isIncome?`<button class="menu-action" type="button" onclick="app.togglePaid('${m.id}')">${st==="paid"?"↩":"✓"} <span><strong>${st==="paid"?"Marcar pendiente":"Pagar"}</strong><small>${st==="paid"?"Volver a dejar el gasto pendiente":"Marcar el importe total como pagado"}</small></span></button>`:""}
+              ${!isIncome&&!isTransferMovement(m)?`<button class="menu-action" type="button" onclick="app.togglePaid('${m.id}')">${st==="paid"?"↩":"✓"} <span><strong>${st==="paid"?"Marcar pendiente":"Pagar"}</strong><small>${st==="paid"?"Volver a dejar el gasto pendiente":"Marcar el importe total como pagado"}</small></span></button>`:""}
               <button class="menu-action" type="button" onclick="app.edit('${m.id}')">✎ <span><strong>Editar</strong><small>Modificar este movimiento</small></span></button>
               <button class="menu-action danger-menu-action" type="button" onclick="app.remove('${m.id}')">🗑 <span><strong>Eliminar</strong><small>Quitar este movimiento</small></span></button>
             </div>
@@ -2107,6 +2142,24 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
         const row=`<tr class="category-group-row"><td><input class="category-group-selector" type="checkbox" data-key="${escapeHtml(key)}" ${allSelected?"checked":""}></td><td>—</td><td><button class="category-group-toggle" type="button" onclick="app.toggleCategoryGroup('${safeKey}')">${isOpen?"▼":"▶"} ${escapeHtml(g.category.icon||"📦")} ${escapeHtml(g.category.name)} <span class="category-group-meta">${g.items.length} ${g.items.length===1?"movimiento":"movimientos"}</span></button></td><td><span class="badge ${g.type==="income"?"badge-income":"badge-expense"}">${g.type==="income"?"Ingreso":"Gasto"}</span></td><td>—</td><td class="amount">${currencyMoney(total,g.items[0]?.currency)}</td><td class="amount">${currencyMoney(paid,g.items[0]?.currency)}</td><td class="amount">${currencyMoney(pending,g.items[0]?.currency)}</td><td class="actions actions-col"><button class="btn btn-small" type="button" onclick="app.toggleCategoryGroup('${safeKey}')">${isOpen?"Ocultar":"Ver detalle"}</button></td></tr>`;
         return row+(isOpen?g.items.map(m=>movementRow(m,"category-child-row")).join(""):"");
       }).join("");
+    }else if(groupByAccount){
+      const groups=new Map();
+      regularMovements.forEach(m=>{
+        const account=accountForMovement(m),key=account?.id||"__sin_cuenta__";
+        if(!groups.has(key))groups.set(key,{account,items:[]});
+        groups.get(key).items.push(m);
+      });
+      regularRows=[...groups.entries()].map(([key,g])=>{
+        const token=`${currentMonth}|${key}`,safeKey=encodeURIComponent(key),isOpen=expandedAccountGroups.has(token);
+        const total=g.items.reduce((n,m)=>n+Number(m.amount||0),0);
+        const paid=g.items.reduce((n,m)=>n+(m.type==="income"?Number(m.amount||0):Number(m.paidAmount||0)),0);
+        const pending=g.items.reduce((n,m)=>n+(m.type==="expense"?Math.max(0,Number(m.amount||0)-Number(m.paidAmount||0)):0),0);
+        const types=new Set(g.items.map(m=>m.type)),typeLabel=types.size===1?(types.has("income")?"Ingreso":"Gasto"):"Mixto";
+        const accountName=g.account?.name||"Sin cuenta",currency=g.account?.currency||g.items[0]?.currency||"UYU";
+        const allSelected=g.items.every(m=>selectedIds.has(m.id));
+        const row=`<tr class="account-group-row"><td><input class="account-group-selector" type="checkbox" data-key="${escapeHtml(key)}" ${allSelected?"checked":""}></td><td>—</td><td><button class="account-group-toggle" type="button" onclick="app.toggleAccountGroup('${safeKey}')">${isOpen?"▼":"▶"} 🏦 ${escapeHtml(accountName)} <span class="account-group-meta">${g.items.length} ${g.items.length===1?"movimiento":"movimientos"} · ${escapeHtml(currency)}</span></button></td><td>${typeLabel==="Mixto"?"—":`<span class="badge ${typeLabel==="Ingreso"?"badge-income":"badge-expense"}">${typeLabel}</span>`}</td><td>—</td><td class="amount">${currencyMoney(total,currency)}</td><td class="amount">${currencyMoney(paid,currency)}</td><td class="amount">${currencyMoney(pending,currency)}</td><td class="actions actions-col"><button class="btn btn-small" type="button" onclick="app.toggleAccountGroup('${safeKey}')">${isOpen?"Ocultar":"Ver detalle"}</button></td></tr>`;
+        return row+(isOpen?g.items.map(m=>movementRow(m,"account-child-row")).join(""):"");
+      }).join("");
     }else regularRows=regularMovements.map(m=>movementRow(m)).join("");
     const rows=groupRows+regularRows;
     $("movementRows").innerHTML=rows;
@@ -2121,6 +2174,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       });
     });
     document.querySelectorAll(".category-group-selector").forEach(check=>{check.addEventListener("change",()=>{const key=check.dataset.key;const items=regularMovements.filter(m=>`${m.type}|${categoryForMovement(m).id||categoryForMovement(m).name}`===key);items.forEach(m=>check.checked?selectedIds.add(m.id):selectedIds.delete(m.id));updateSelectionSummary();render()})});
+    document.querySelectorAll(".account-group-selector").forEach(check=>{check.addEventListener("change",()=>{const key=check.dataset.key;const items=regularMovements.filter(m=>(accountForMovement(m)?.id||"__sin_cuenta__")===key);items.forEach(m=>check.checked?selectedIds.add(m.id):selectedIds.delete(m.id));updateSelectionSummary();render()})});
     document.querySelectorAll(".carry-group-selector").forEach(check=>{
       check.addEventListener("change",()=>{
         carryMovements.forEach(m=>check.checked?selectedIds.add(m.id):selectedIds.delete(m.id));
@@ -2208,7 +2262,14 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
 
   function resetCardDefinition(){$("cardDefinitionForm").reset();$("cardCurrency").value="UYU";$("cardEditId").value="";$("cardDefinitionTitle").textContent="Nueva tarjeta";$("cancelCardEditBtn").hidden=true}
 
-  function updateFinancialSelectors(){const accountOptions=accounts.map(a=>`<option value="${a.id}">${escapeHtml(a.name)} · ${a.currency}</option>`).join("");["movementAccount","cardPaymentAccount","transferSourceAccount","transferDestinationAccount"].forEach(id=>{const el=$(id);if(el){const old=el.value;el.innerHTML=accountOptions;el.value=accounts.some(a=>a.id===old)?old:(defaultAccount()?.id||"")}});const cardOptions=creditCards.map(c=>`<option value="${c.id}">${escapeHtml(c.name)} · ${c.currency||"UYU"}</option>`).join("");const cp=$("cardPaymentCard");if(cp){const old=cp.value;cp.innerHTML=cardOptions;cp.value=creditCards.some(c=>c.id===old)?old:(creditCards[0]?.id||"")}updateCardPaymentRate()}
+  function updateFinancialSelectors(){
+    const accountOptions=accounts.map(a=>`<option value="${a.id}">${escapeHtml(a.name)} · ${a.currency}</option>`).join("");
+    ["movementAccount","cardPaymentAccount","transferSourceAccount","transferDestinationAccount"].forEach(id=>{const el=$(id);if(el){const old=el.value;el.innerHTML=accountOptions;el.value=accounts.some(a=>a.id===old)?old:(defaultAccount()?.id||"")}});
+    const accountFilter=$("accountFilter");
+    if(accountFilter){const old=accountFilter.value||"all";accountFilter.innerHTML=`<option value="all">Todas las cuentas</option>${accountOptions}`;accountFilter.value=old==="all"||accounts.some(a=>a.id===old)?old:"all"}
+    const cardOptions=creditCards.map(c=>`<option value="${c.id}">${escapeHtml(c.name)} · ${c.currency||"UYU"}</option>`).join("");
+    const cp=$("cardPaymentCard");if(cp){const old=cp.value;cp.innerHTML=cardOptions;cp.value=creditCards.some(c=>c.id===old)?old:(creditCards[0]?.id||"")}updateCardPaymentRate()
+  }
   function renderAccounts(){const month=$("monthFilter").value,throughDate=`${month}-${String(new Date(Number(month.slice(0,4)),Number(month.slice(5,7)),0).getDate()).padStart(2,"0")}`,balances=groupCurrency(accounts,a=>accountBalance(a,throughDate),a=>a.currency);$("accountsSummary").innerHTML=`<div class="card-section-label">Saldo actual por moneda</div>${Object.entries(balances).map(([c,v])=>`<div class="computed-row"><span>${c}</span><strong>${currencyMoney(v,c)}</strong></div>`).join("")||'<div class="cards-empty">Sin saldos registrados.</div>'}`;$("accountsList").innerHTML=accounts.map(a=>`<article class="account-item"><div class="account-item-head"><div><strong>${escapeHtml(a.name)}</strong><div class="hint">${escapeHtml(a.bank||"Sin banco")}${a.isDefault?" · Predeterminada":""}</div></div><span class="currency-badge">${a.currency}</span></div><div class="account-balance">${currencyMoney(accountBalance(a,throughDate),a.currency)}</div><div class="account-actions"><button class="btn btn-small" type="button" onclick="accountsApp.edit('${a.id}')">Editar</button><button class="btn btn-small" type="button" onclick="accountsApp.remove('${a.id}')">Eliminar</button></div></article>`).join("")}
   function resetAccountForm(){$("accountForm").reset();$("accountEditId").value="";$("accountCurrency").value="UYU";$("accountFormTitle").textContent="Nueva cuenta";$("cancelAccountEditBtn").hidden=true}
   window.accountsApp={edit(id){const a=accountById(id);if(!a)return;$("accountEditId").value=a.id;$("accountName").value=a.name;$("accountBank").value=a.bank||"";$("accountCurrency").value=a.currency;$("accountDefault").checked=!!a.isDefault;$("accountFormTitle").textContent="Editar cuenta";$("cancelAccountEditBtn").hidden=false},async remove(id){
@@ -2286,17 +2347,18 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
   }
   function monthsBetween(start,end){const [sy,sm]=start.split("-").map(Number),[ey,em]=end.split("-").map(Number);return (ey-sy)*12+(em-sm)}
 
-  function renderCardProjectionTimeline(card,month){const months=Array.from({length:8},(_,i)=>addMonths(month,i));$("cardProjectionTimeline").innerHTML=`<h4>Evolución proyectada</h4><div class="projection-grid">${months.map(m=>{const c=cardMonthCalc(card,m);return `<article class="projection-month ${m===month?"active":""}" role="button" tabindex="0" title="Ir a ${monthLabel(m)}" aria-label="Ir a ${monthLabel(m)}" onclick="cardsApp.goToMonth('${m}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();cardsApp.goToMonth('${m}')}"><div class="month">${monthLabel(m)}</div><div class="state">${c.confirmed?"Estado confirmado":"Estado estimado"}</div><div class="amount">${money(c.statementAmount)}</div><div class="payment">Pago previsto: ${money(c.paid)}</div></article>`}).join("")}</div>`}
+  function renderCardProjectionTimeline(card,month){const cur=card?.currency||"UYU",months=Array.from({length:8},(_,i)=>addMonths(month,i));$("cardProjectionTimeline").innerHTML=`<h4>Evolución proyectada</h4><div class="projection-grid">${months.map(m=>{const c=cardMonthCalc(card,m);return `<article class="projection-month ${m===month?"active":""}" role="button" tabindex="0" title="Ir a ${monthLabel(m)}" aria-label="Ir a ${monthLabel(m)}" onclick="cardsApp.goToMonth('${m}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();cardsApp.goToMonth('${m}')}"><div class="month">${monthLabel(m)}</div><div class="state">${c.confirmed?"Estado confirmado":"Estado estimado"}</div><div class="amount">${currencyMoney(c.statementAmount,cur)}</div><div class="payment">Pago previsto: ${currencyMoney(c.paid,cur)}</div></article>`}).join("")}</div>`}
   function renderCardComputed(cardArg=null,monthArg=null,calcArg=null){const card=cardArg||cardById(selectedCardId),month=monthArg||$("monthFilter").value;if(!card)return;const c=calcArg||liveCardCalc()||cardMonthCalc(card,month),cur=card.currency||"UYU";$("cardComputed").innerHTML=`<div class="card-section-label">Estado recibido y pagos</div><div class="computed-row total"><span>Importe del último estado</span><strong>${currencyMoney(c.statementAmount,cur)}</strong></div><div class="computed-row"><span>Pagos registrados</span><strong>${currencyMoney(c.actualPaid,cur)}</strong></div><div class="computed-row"><span>Pago previsto adicional</span><strong>${currencyMoney(c.plannedPaid,cur)}</strong></div><div class="computed-row"><span>Saldo que quedará pendiente</span><strong>${currencyMoney(c.pending,cur)}</strong></div><div class="computed-row"><span>Interés estimado sobre el saldo</span><strong>${currencyMoney(c.calculatedInterest,cur)}</strong></div><div class="card-section-label">Actividad del mes para el próximo cierre</div><div class="computed-row"><span>Compras en un pago y débitos automáticos</span><strong>${currencyMoney(c.singlePurchases,cur)}</strong></div><div class="computed-row"><span>Compras en cuotas</span><strong>${currencyMoney(c.installments,cur)}</strong></div>${renderCardPurchaseDetail(card.id,month)}${c.newActivity===0?`<div class="card-activity-empty">Todavía no registraste compras ni débitos automáticos para este período.</div>`:""}<div class="computed-row total card-next-total"><span>Próximo cierre estimado</span><strong>${currencyMoney(c.nextBalance,cur)}</strong></div>`}
-  function renderInstallments(cardId=selectedCardId,viewedMonth=$("monthFilter").value){const plans=installmentPlans.filter(p=>p.cardId===cardId&&viewedMonth<=addMonths(p.startMonth,Number(p.count||0)-1));$("installmentList").innerHTML=plans.length?plans.map(p=>`<div class="installment-item"><div><strong>${escapeHtml(p.label||"Compra en cuotas")}</strong><div class="installment-meta">${p.count} cuotas de ${money(p.amount)} · total ${money(Number(p.totalPurchaseAmount||Number(p.amount)*Number(p.count)))} · compra ${p.purchaseDate?prettyDate(p.purchaseDate):"sin fecha"} · desde ${monthLabel(p.startMonth)} hasta ${monthLabel(addMonths(p.startMonth,Number(p.count||0)-1))}</div></div><strong>${money(Number(p.totalPurchaseAmount||Number(p.amount)*Number(p.count)))}</strong><div class="installment-actions"><button class="btn btn-small" onclick="cardsApp.editInstallment('${p.id}')" type="button">Editar</button><button class="btn btn-small" onclick="cardsApp.removeInstallment('${p.id}')" type="button">Eliminar</button></div></div>`).join(""):`<div class="cards-empty">No hay compras en cuotas activas o futuras para esta tarjeta desde ${monthLabel(viewedMonth)}.</div>`}
+  function renderInstallments(cardId=selectedCardId,viewedMonth=$("monthFilter").value){const card=cardById(cardId),cur=card?.currency||"UYU",plans=installmentPlans.filter(p=>p.cardId===cardId&&viewedMonth<=addMonths(p.startMonth,Number(p.count||0)-1));$("installmentList").innerHTML=plans.length?plans.map(p=>`<div class="installment-item"><div><strong>${escapeHtml(p.label||"Compra en cuotas")}</strong><div class="installment-meta">${p.count} cuotas de ${currencyMoney(p.amount,cur)} · total ${currencyMoney(Number(p.totalPurchaseAmount||Number(p.amount)*Number(p.count)),cur)} · compra ${p.purchaseDate?prettyDate(p.purchaseDate):"sin fecha"} · desde ${monthLabel(p.startMonth)} hasta ${monthLabel(addMonths(p.startMonth,Number(p.count||0)-1))}</div></div><strong>${currencyMoney(Number(p.totalPurchaseAmount||Number(p.amount)*Number(p.count)),cur)}</strong><div class="installment-actions"><button class="btn btn-small" onclick="cardsApp.editInstallment('${p.id}')" type="button">Editar</button><button class="btn btn-small" onclick="cardsApp.removeInstallment('${p.id}')" type="button">Eliminar</button></div></div>`).join(""):`<div class="cards-empty">No hay compras en cuotas activas o futuras para esta tarjeta desde ${monthLabel(viewedMonth)}.</div>`}
   function renderCardPurchaseDetail(cardId,month){
+    const cur=cardById(cardId)?.currency||"UYU";
     const items=cardActivityFor(cardId,month).sort((a,b)=>(a.purchaseDate||a.date).localeCompare(b.purchaseDate||b.date)).map(m=>{
       const prefix=m.origin==="recurring"?"Débito automático: ":m.origin==="installment"?"":"";
-      return `<div class="computed-row sub card-activity-row"><span>↳ ${prefix}${escapeHtml(m.description||"Compra con tarjeta")}</span><span class="card-activity-value"><strong>${money(m.amount)}</strong><button class="icon-action danger" type="button" title="Eliminar movimiento" aria-label="Eliminar ${escapeHtml(m.description||"movimiento")}" onclick="cardsApp.removeMovement('${m.id}')">🗑</button></span></div>`;
+      return `<div class="computed-row sub card-activity-row"><span>↳ ${prefix}${escapeHtml(m.description||"Compra con tarjeta")}</span><span class="card-activity-value"><strong>${currencyMoney(m.amount,cur)}</strong><button class="icon-action danger" type="button" title="Eliminar movimiento" aria-label="Eliminar ${escapeHtml(m.description||"movimiento")}" onclick="cardsApp.removeMovement('${m.id}')">🗑</button></span></div>`;
     });
     return items.length?`<div class="card-purchase-breakdown">${items.join("")}</div>`:"";
   }
-  function renderBudgetCards(){const month=$("monthFilter").value;$("budgetCardsList").innerHTML=creditCards.length?creditCards.map(card=>{const c=cardMonthCalc(card,month);return `<details class="budget-credit-card"><summary><div><div>💳 ${escapeHtml(card.name)} · ${escapeHtml(card.bank)}</div><div class="budget-card-summary-meta">Estado ${money(c.statementAmount)} · pagás ${money(c.paid)} · queda ${money(c.pending)}</div></div><div class="budget-card-total">${money(c.paid)}</div></summary><div class="budget-card-detail"><div class="computed-row total"><span>Importe del último estado</span><strong>${money(c.statementAmount)}</strong></div><div class="computed-row"><span>Pago previsto este mes</span><strong>${money(c.paid)}</strong></div><div class="computed-row"><span>Saldo pendiente</span><strong>${money(c.pending)}</strong></div><div class="computed-row"><span>Interés estimado</span><strong>${money(c.calculatedInterest)}</strong></div><div class="card-section-label">Actividad para el próximo cierre</div><div class="computed-row"><span>Compras y débitos automáticos</span><strong>${money(c.singlePurchases)}</strong></div><div class="computed-row"><span>Cuotas del período</span><strong>${money(c.installments)}</strong></div>${renderCardPurchaseDetail(card.id,month)}<div class="computed-row total"><span>Próximo cierre estimado</span><strong>${money(c.nextBalance)}</strong></div></div></details>`}).join(""):`<div class="cards-empty">No hay tarjetas definidas.</div>`}
+  function renderBudgetCards(){const month=$("monthFilter").value;$("budgetCardsList").innerHTML=creditCards.length?creditCards.map(card=>{const c=cardMonthCalc(card,month),cur=card.currency||"UYU";return `<details class="budget-credit-card"><summary><div><div>💳 ${escapeHtml(card.name)} · ${escapeHtml(card.bank)}</div><div class="budget-card-summary-meta">Estado ${currencyMoney(c.statementAmount,cur)} · pagás ${currencyMoney(c.paid,cur)} · queda ${currencyMoney(c.pending,cur)}</div></div><div class="budget-card-total">${currencyMoney(c.paid,cur)}</div></summary><div class="budget-card-detail"><div class="computed-row total"><span>Importe del último estado</span><strong>${currencyMoney(c.statementAmount,cur)}</strong></div><div class="computed-row"><span>Pago previsto este mes</span><strong>${currencyMoney(c.paid,cur)}</strong></div><div class="computed-row"><span>Saldo pendiente</span><strong>${currencyMoney(c.pending,cur)}</strong></div><div class="computed-row"><span>Interés estimado</span><strong>${currencyMoney(c.calculatedInterest,cur)}</strong></div><div class="card-section-label">Actividad para el próximo cierre</div><div class="computed-row"><span>Compras y débitos automáticos</span><strong>${currencyMoney(c.singlePurchases,cur)}</strong></div><div class="computed-row"><span>Cuotas del período</span><strong>${currencyMoney(c.installments,cur)}</strong></div>${renderCardPurchaseDetail(card.id,month)}<div class="computed-row total"><span>Próximo cierre estimado</span><strong>${currencyMoney(c.nextBalance,cur)}</strong></div></div></details>`}).join(""):`<div class="cards-empty">No hay tarjetas definidas.</div>`}
   window.cardsApp={goToMonth(month){const y=window.scrollY;$("monthFilter").value=month;render();requestAnimationFrame(()=>window.scrollTo({top:y,behavior:"auto"}))},select(id){if(!creditCards.some(card=>card.id===id))return;selectedCardId=id;render()},openPayment(){const card=cardById(selectedCardId);if(!card)return;resetForm();$("type").value="expense";$("paymentMethod").value="card_payment";updateMovementCardFields();$("cardPaymentCard").value=card.id;$("description").value=`Pago ${card.name}`;openMovementDrawer()},openPurchase(){const card=cardById(selectedCardId);if(!card)return;resetForm();$("type").value="expense";$("paymentMethod").value="card";updateMovementCardFields();$("movementCard").value=card.id;$("cardBillingMonth").value=billingMonthForPurchase(card,$("date").value||new Date().toISOString().slice(0,10));openMovementDrawer()},edit(id){const c=creditCards.find(x=>x.id===id);if(!c)return;$("cardEditId").value=c.id;$("cardName").value=c.name;$("cardBank").value=c.bank;$("cardCurrency").value=c.currency||"UYU";$("cardClosingDay").value=c.closingDay||"";$("cardDueDay").value=c.dueDay||"";$("cardInterestRate").value=c.interestRate;$("cardDefinitionTitle").textContent="Editar tarjeta";$("cancelCardEditBtn").hidden=false;showScreen("cardsScreen")},async remove(id){
       if(!confirm("¿Eliminar esta tarjeta? Se eliminarán sus estados, cuotas y movimientos de tarjeta; los recurrentes quedarán sin tarjeta asignada."))return;
       try{
@@ -2748,9 +2810,21 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
     }
     if($("paymentMethod").value==="transfer"){
       const source=accountById($("transferSourceAccount").value),destination=accountById($("transferDestinationAccount").value),destinationAmount=Number($("transferDestinationAmount").value||0);
-      if(!source||!destination||source.id===destination.id||destinationAmount<=0){alert("Seleccioná dos cuentas diferentes e indicá el importe acreditado.");return}
-      const movement={id:id||uid("movement"),type:"expense",operationType:"transfer",description:$("description").value.trim()||`Transferencia a ${destination.name}`,amount,date:$("date").value,categoryId:"exp-ahorro",category:"Ahorro",accountId:source.id,currency:source.currency,destinationAccountId:destination.id,destinationAmount,destinationCurrency:destination.currency,effectiveRate:source.currency===destination.currency?1:roundMoney(amount/destinationAmount),paid:true,complete:true,paidAmount:amount,carriedTo:[]};
-      movements=id?movements.map(m=>m.id===id?movement:m):[...movements,movement];saveData();render();closeMovementDrawer();return;
+      if(!source||!destination||source.id===destination.id||amount<=0||destinationAmount<=0){alert("Seleccioná dos cuentas diferentes e indicá importes válidos.");return}
+      const existing=id?movements.find(m=>m.id===id):null;
+      const existingOut=existing?.transferId?movements.find(m=>m.transferId===existing.transferId&&m.transferRole==="out"):existing;
+      const existingIn=existingOut?.transferId?movements.find(m=>m.transferId===existingOut.transferId&&m.transferRole==="in"):null;
+      const transferId=existingOut?.transferId||uid("transfer");
+      const rate=source.currency===destination.currency?1:roundMoney(amount/destinationAmount);
+      const customDescription=$("description").value.trim();
+      const common={operationType:"transfer",date:$("date").value,paid:true,complete:true,carriedTo:[],transferId,transferSourceAccountId:source.id,transferDestinationAccountId:destination.id,budgetImpact:"internal_transfer",effectiveRate:rate,paymentMethod:"transfer"};
+      const outMovement={...common,id:existingOut?.id||uid("movement"),type:"expense",transferRole:"out",description:customDescription||`Transferencia a ${destination.name}`,amount,paidAmount:amount,categoryId:"exp-ahorro",category:"Ahorro",accountId:source.id,currency:source.currency,destinationAccountId:destination.id,destinationAmount,destinationCurrency:destination.currency};
+      const inMovement={...common,id:existingIn?.id||uid("movement"),type:"income",transferRole:"in",description:customDescription?`${customDescription} · entrada`:`Transferencia desde ${source.name}`,amount:destinationAmount,paidAmount:destinationAmount,categoryId:"",category:"Transferencia",accountId:destination.id,currency:destination.currency,destinationAccountId:null,destinationAmount:null,destinationCurrency:null};
+      try{
+        await runAtomicOperation("guardar transferencia",()=>supabase.rpc("panorama_save_transfer",{p_out:movementToCloud(outMovement),p_in:movementToCloud(inMovement)}));
+        closeMovementDrawer();
+      }catch{}
+      return;
     }
     if(type==="expense" && $("paymentMethod").value==="card_payment"){
       const account=accountById($("cardPaymentAccount").value),card=cardById($("cardPaymentCard").value);
@@ -2857,7 +2931,9 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
   };
 
   window.app={
-    toggleCategoryGroup(encodedKey){const key=decodeURIComponent(encodedKey),token=`${$("monthFilter").value}|${key}`;if(expandedCategoryGroups.has(token))expandedCategoryGroups.delete(token);else expandedCategoryGroups.add(token);render()},toggleCarryGroup(month){
+    toggleCategoryGroup(encodedKey){const key=decodeURIComponent(encodedKey),token=`${$("monthFilter").value}|${key}`;if(expandedCategoryGroups.has(token))expandedCategoryGroups.delete(token);else expandedCategoryGroups.add(token);render()},
+    toggleAccountGroup(encodedKey){const key=decodeURIComponent(encodedKey),token=`${$("monthFilter").value}|${key}`;if(expandedAccountGroups.has(token))expandedAccountGroups.delete(token);else expandedAccountGroups.add(token);render()},
+    toggleCarryGroup(month){
       if(expandedCarryGroups.has(month)) expandedCarryGroups.delete(month);
       else expandedCarryGroups.add(month);
       renderTable(filteredMonthMovements());
@@ -2871,7 +2947,8 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       saveData();render();
     },
     edit(id){
-      const m=movements.find(x=>x.id===id);if(!m)return;
+      let m=movements.find(x=>x.id===id);if(!m)return;
+      if(isTransferMovement(m)&&m.transferId){m=movements.find(x=>x.transferId===m.transferId&&x.transferRole==="out")||m}
       $("editId").value=m.id;$("type").value=m.type;updateCategories(m.categoryId||categoryForMovement(m).id);
       $("description").value=m.description;$("amount").value=m.amount;$("date").value=m.purchaseDate||m.date;
       if(isCardActivity(m)){
@@ -2898,7 +2975,16 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       updatePartialVisibility();$("formTitle").textContent="Editar movimiento";$("saveBtn").textContent="Guardar cambios";
       openMovementDrawer();
     },
-    remove(id){if(!confirm("¿Eliminar este movimiento?"))return;movements=movements.filter(m=>m.id!==id);selectedIds.delete(id);saveData();render()}
+    async remove(id){
+      const m=movements.find(x=>x.id===id);if(!m)return;
+      if(isTransferMovement(m)&&m.transferId){
+        if(!confirm("¿Eliminar esta transferencia? Se eliminarán tanto la salida como la entrada vinculada."))return;
+        try{await runAtomicOperation("eliminar transferencia",()=>supabase.rpc("panorama_delete_transfer",{p_transfer_id:m.transferId}));selectedIds.delete(id)}catch{}
+        return;
+      }
+      if(!confirm("¿Eliminar este movimiento?"))return;
+      movements=movements.filter(x=>x.id!==id);selectedIds.delete(id);saveData();render()
+    }
   };
 
   $("carryBtn").addEventListener("click",()=>{
@@ -3146,7 +3232,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
   function resetReconcileState(){const form=$("reconcileForm");if(form)form.reset();$("reconcileAnalysis").innerHTML="";$("reconcileAnalysis").hidden=true;$("reconcileActions").hidden=true;pendingObservedRate=null}
   function openReconcile(){const card=creditCards.find(c=>c.id===selectedCardId);if(!card)return;resetReconcileState();const month=$("monthFilter").value,r=cardMonthRecord(card.id,month,false)||{};$("reconcileSubtitle").textContent=`${card.name} · ${monthLabel(month)} · ${card.currency||"UYU"}`;$("reconcilePrevious").value=Number(r.previousBalance||$("cardPreviousBalance").value||0)||"";$("reconcileInterest").value=Number(r.actualInterest||0)||"";$("reconcileTax").value=Number(r.taxAmount||0)||0;$("reconcileInsurance").value=Number(r.insuranceAmount||0)||0;$("reconcileOther").value=Number(r.otherCharges||0)||0;$("reconcileOverlay").classList.add("open");$("reconcileOverlay").setAttribute("aria-hidden","false")}
   function closeReconcile(){$("reconcileOverlay").classList.remove("open");$("reconcileOverlay").setAttribute("aria-hidden","true");resetReconcileState()}
-  function analyzeReconcile(){const previous=Number($("reconcilePrevious").value||0),paid=cardPaymentsApplied(selectedCardId,$("monthFilter").value),interest=Number($("reconcileInterest").value||0),financed=Math.max(0,previous-paid);pendingObservedRate=financed>0?interest/financed*100:null;const tax=Number($("reconcileTax").value||0),taxRate=interest>0?tax/interest*100:null;$("reconcileAnalysis").innerHTML=`<div><strong>Saldo financiado observado:</strong> ${money(financed)}</div>${pendingObservedRate===null?`<div>No es posible detectar una tasa porque el saldo financiado es cero.</div>`:`<div class="rate-detected">Tasa observada aproximada: ${pendingObservedRate.toFixed(2)}%</div><div>Configurada actualmente: ${Number(creditCards.find(c=>c.id===selectedCardId)?.interestRate||0).toFixed(2)}%</div>`}${taxRate===null?"":`<div>Impuesto observado sobre intereses: ${taxRate.toFixed(2)}%</div>`}<small>La tasa es una aproximación: el banco puede usar días, fechas de pago, redondeos u otras reglas.</small>`;$("reconcileAnalysis").hidden=false;$("reconcileActions").hidden=false}
+  function analyzeReconcile(){const previous=Number($("reconcilePrevious").value||0),paid=cardPaymentsApplied(selectedCardId,$("monthFilter").value),interest=Number($("reconcileInterest").value||0),financed=Math.max(0,previous-paid),cur=cardById(selectedCardId)?.currency||"UYU";pendingObservedRate=financed>0?interest/financed*100:null;const tax=Number($("reconcileTax").value||0),taxRate=interest>0?tax/interest*100:null;$("reconcileAnalysis").innerHTML=`<div><strong>Saldo financiado observado:</strong> ${currencyMoney(financed,cur)}</div>${pendingObservedRate===null?`<div>No es posible detectar una tasa porque el saldo financiado es cero.</div>`:`<div class="rate-detected">Tasa observada aproximada: ${pendingObservedRate.toFixed(2)}%</div><div>Configurada actualmente: ${Number(creditCards.find(c=>c.id===selectedCardId)?.interestRate||0).toFixed(2)}%</div>`}${taxRate===null?"":`<div>Impuesto observado sobre intereses: ${taxRate.toFixed(2)}%</div>`}<small>La tasa es una aproximación: el banco puede usar días, fechas de pago, redondeos u otras reglas.</small>`;$("reconcileAnalysis").hidden=false;$("reconcileActions").hidden=false}
   async function saveReconcile(updateRate){
     const card=creditCards.find(c=>c.id===selectedCardId);if(!card)return;
     const month=$("monthFilter").value;
@@ -3215,7 +3301,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
   $("cardPaidAmount").addEventListener("change",()=>{if(!selectedCardId)return;const month=$("monthFilter").value,r=cardMonthRecord(selectedCardId,month,true);r.paidAmount=Number($("cardPaidAmount").value||0);saveCards();render()});
   $("cardMonthForm").addEventListener("submit",e=>e.preventDefault());
   function updateStandaloneInstallmentMode(){const mode=$("installmentInputMode")?.value||"total";if(!$("installmentAmountLabel"))return;$("installmentAmountLabel").firstChild.textContent=mode==="per_installment"?"Importe por cuota":"Importe total";updateInstallmentCalculation()}
-  function updateInstallmentCalculation(){const box=$("installmentCalculation");if(!box)return;const count=Math.max(2,Number($("installmentCount")?.value||2)),entered=Number($("installmentAmount")?.value||0),mode=$("installmentInputMode")?.value||"total";if(!entered){box.textContent="Indicá el importe y la cantidad de cuotas para ver el cálculo.";return}const per=roundMoney(mode==="total"?entered/count:entered),total=roundMoney(mode==="total"?entered:entered*count);box.innerHTML=`<span><strong>${count} cuotas de ${money(per)}</strong></span><span>Total de la compra: ${money(total)}</span>`}
+  function updateInstallmentCalculation(){const box=$("installmentCalculation");if(!box)return;const count=Math.max(2,Number($("installmentCount")?.value||2)),entered=Number($("installmentAmount")?.value||0),mode=$("installmentInputMode")?.value||"total",cur=cardById(selectedCardId)?.currency||"UYU";if(!entered){box.textContent="Indicá el importe y la cantidad de cuotas para ver el cálculo.";return}const per=roundMoney(mode==="total"?entered/count:entered),total=roundMoney(mode==="total"?entered:entered*count);box.innerHTML=`<span><strong>${count} cuotas de ${currencyMoney(per,cur)}</strong></span><span>Total de la compra: ${currencyMoney(total,cur)}</span>`}
   function resetInstallmentForm(){$("installmentEditId").value="";$("installmentLabel").value="";$("installmentCount").value=2;$("installmentInputMode").value="total";$("installmentAmount").value="";updateStandaloneInstallmentMode();$("installmentPurchaseDate").value=new Date().toISOString().slice(0,10);refreshInstallmentSuggestedMonth();$("installmentSubmitBtn").textContent="Agregar compra";$("cancelInstallmentEditBtn").hidden=true}
   $("installmentForm").addEventListener("submit",async e=>{
     e.preventDefault();if(!selectedCardId)return;
@@ -3314,13 +3400,15 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       const per=total&&count?roundMoney(total/count):0;
       perInput.value=total?String(per):"";
       $("amount").value=total?String(total):"";
-      $("movementInstallmentSummary").textContent=total?`${count} cuotas de ${money(per)} · total ${money(total)}`:"Indicá el total de la compra y la cantidad de cuotas.";
+      const cur=cardById($("movementCard").value)?.currency||"UYU";
+      $("movementInstallmentSummary").textContent=total?`${count} cuotas de ${currencyMoney(per,cur)} · total ${currencyMoney(total,cur)}`:"Indicá el total de la compra y la cantidad de cuotas.";
     }else{
       const per=Math.max(0,Number(perInput.value||0));
       const total=per?roundMoney(per*count):0;
       totalInput.value=per?String(total):"";
       $("amount").value=per?String(per):"";
-      $("movementInstallmentSummary").textContent=per?`${count} cuotas de ${money(per)} · total ${money(total)}`:"Indicá el importe por cuota y la cantidad de cuotas.";
+      const cur=cardById($("movementCard").value)?.currency||"UYU";
+      $("movementInstallmentSummary").textContent=per?`${count} cuotas de ${currencyMoney(per,cur)} · total ${currencyMoney(total,cur)}`:"Indicá el importe por cuota y la cantidad de cuotas.";
     }
   }
 
@@ -3391,7 +3479,9 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
   });
   $("monthFilter").addEventListener("change",()=>{render();queueCloudWrite("preferencias",()=>persistPreferencesCloud())});
   $("overviewMonths").addEventListener("change",()=>{overviewPageIndex=0;renderOverview();});
-  $("searchFilter").addEventListener("input",render);$("typeFilter").addEventListener("change",render);$("statusFilter").addEventListener("change",render);$("sortFilter").addEventListener("change",render);$("groupByCategory").addEventListener("change",render);
+  $("searchFilter").addEventListener("input",render);$("typeFilter").addEventListener("change",render);$("statusFilter").addEventListener("change",render);$("accountFilter").addEventListener("change",render);$("sortFilter").addEventListener("change",render);
+  $("groupByCategory").addEventListener("change",()=>{if($("groupByCategory").checked)$("groupByAccount").checked=false;render()});
+  $("groupByAccount").addEventListener("change",()=>{if($("groupByAccount").checked)$("groupByCategory").checked=false;render()});
   $("printBtn").addEventListener("click",()=>{closeActionsMenu();window.print()});
 
   function legacyBackupToCanonical(parsed){
