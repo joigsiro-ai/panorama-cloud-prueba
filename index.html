@@ -9,7 +9,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/panorama-icon.svg" />
   <link rel="apple-touch-icon" href="assets/panorama-icon-192.png" />
   <link rel="manifest" href="manifest.webmanifest" />
-  <title>Panorama · Cloud 0.4.7.1</title>
+  <title>Panorama · Cloud 0.4.7.2</title>
   <style>
     :root{
       --bg:#f4f6f8;--card:#fff;--text:#18212f;--muted:#6b7280;--line:#e5e7eb;
@@ -1172,7 +1172,7 @@
       <section class="card">
         <span class="danger-zone-eyebrow">Acerca de Panorama</span>
         <h3 style="margin:8px 0 6px">Panorama Vision</h3>
-        <p style="margin:0;color:var(--muted)">Cloud 0.4.7.1 · Recurrentes por lote UX Fix</p>
+        <p style="margin:0;color:var(--muted)">Cloud 0.4.7.2 · Fix guardado de movimientos</p>
       </section>
       <section class="card danger-zone-card">
         <div class="danger-zone-content">
@@ -1230,7 +1230,7 @@
 
 <script type="module">
 import { supabase, hasSupabaseConfig } from "./src/supabase.js";
-  const PANORAMA_BUILD="Cloud 0.4.7.1 · Recurrentes por lote UX Fix";
+  const PANORAMA_BUILD="Cloud 0.4.7.2 · Fix guardado de movimientos";
 
 (async () => {
   // Panorama Cloud 0.4: Supabase is the only persistent data store.
@@ -2005,6 +2005,15 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
   function updateCardPaymentRate(){
     const account=accountById($("cardPaymentAccount")?.value),card=cardById($("cardPaymentCard")?.value),debited=Number($("amount")?.value||0),field=$("cardPaymentAppliedField"),input=$("cardPaymentApplied"),box=$("cardPaymentRate");
     if(!box||!field||!input)return;
+    const isCardPayment=$("type")?.value==="expense"&&$("paymentMethod")?.value==="card_payment";
+    if(!isCardPayment){
+      field.hidden=true;
+      field.style.display="none";
+      input.required=false;
+      input.disabled=true;
+      box.textContent="";
+      return;
+    }
     if(!account||!card){field.hidden=false;field.style.display="";input.required=true;input.disabled=false;box.textContent="";return}
     const sameCurrency=account.currency===card.currency;
     field.hidden=sameCurrency;
