@@ -9,7 +9,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/panorama-icon.svg" />
   <link rel="apple-touch-icon" href="assets/panorama-icon-192.png" />
   <link rel="manifest" href="manifest.webmanifest" />
-  <title>Panorama · Cloud 0.4.7</title>
+  <title>Panorama · Cloud 0.4.7.1</title>
   <style>
     :root{
       --bg:#f4f6f8;--card:#fff;--text:#18212f;--muted:#6b7280;--line:#e5e7eb;
@@ -69,6 +69,7 @@
     .recurring-batch-amount label{font-size:.72rem;color:var(--muted);font-weight:800}
     .recurring-batch-amount input{width:100%;padding:10px 11px}
     .recurring-batch-item.is-unselected{opacity:.55}
+    .recurring-batch-toolbar[hidden],.recurring-batch-footer[hidden],#startRecurringBatchBtn[hidden]{display:none!important}
     .recurring-batch-footer{position:sticky;bottom:12px;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:13px 14px;border:1px solid var(--line);border-radius:15px;background:var(--card);box-shadow:0 12px 30px rgba(15,23,42,.14);flex-wrap:wrap}
     .recurring-batch-summary{font-weight:850}
     .recurring-batch-footer-actions{display:flex;gap:8px;flex-wrap:wrap}
@@ -918,7 +919,7 @@
       <section class="card">
         <div class="recurring-list-head">
           <h2>Gastos recurrentes</h2>
-          <button class="btn btn-primary" type="button" id="startRecurringBatchBtn">＋ Agregar recurrentes al mes</button>
+          <button class="btn btn-primary" type="button" id="startRecurringBatchBtn">Aplicar recurrentes al mes</button>
         </div>
         <div id="recurringBatchToolbar" class="recurring-batch-toolbar" hidden>
           <strong id="recurringBatchMonthLabel"></strong>
@@ -933,7 +934,7 @@
           <div id="recurringBatchSummary" class="recurring-batch-summary">0 seleccionados</div>
           <div class="recurring-batch-footer-actions">
             <button class="btn" type="button" id="cancelRecurringBatchBtn">Cancelar</button>
-            <button class="btn btn-primary" type="button" id="confirmRecurringBatchBtn">Agregar al mes</button>
+            <button class="btn btn-primary" type="button" id="confirmRecurringBatchBtn">Aplicar al mes</button>
           </div>
         </div>
       </section>
@@ -1171,7 +1172,7 @@
       <section class="card">
         <span class="danger-zone-eyebrow">Acerca de Panorama</span>
         <h3 style="margin:8px 0 6px">Panorama Vision</h3>
-        <p style="margin:0;color:var(--muted)">Cloud 0.4.7 · Recurrentes por lote</p>
+        <p style="margin:0;color:var(--muted)">Cloud 0.4.7.1 · Recurrentes por lote UX Fix</p>
       </section>
       <section class="card danger-zone-card">
         <div class="danger-zone-content">
@@ -1229,7 +1230,7 @@
 
 <script type="module">
 import { supabase, hasSupabaseConfig } from "./src/supabase.js";
-  const PANORAMA_BUILD="Cloud 0.4.7 · Recurrentes por lote";
+  const PANORAMA_BUILD="Cloud 0.4.7.1 · Recurrentes por lote UX Fix";
 
 (async () => {
   // Panorama Cloud 0.4: Supabase is the only persistent data store.
@@ -2802,62 +2803,84 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
   function renderRecurring(){
     const month=$("monthFilter").value||currentMonth;
     const items=[...recurringExpenses].sort((a,b)=>a.description.localeCompare(b.description,"es"));
+
+    // Fuera del modo lote se ve únicamente la lista normal + el botón de entrada.
     $("startRecurringBatchBtn").hidden=recurringBatchMode||items.length===0;
     $("recurringBatchToolbar").hidden=!recurringBatchMode;
     $("recurringBatchFooter").hidden=!recurringBatchMode;
-    if(recurringBatchMode)$("recurringBatchMonthLabel").textContent=`Preparando recurrentes para ${monthLabel(month)}`;
+
+    if(recurringBatchMode){
+      $("recurringBatchMonthLabel").textContent=`Aplicar recurrentes a ${monthLabel(month)}`;
+    }else{
+      $("recurringBatchMonthLabel").textContent="";
+    }
+
     $("recurringList").innerHTML=items.map(item=>{
       const category=categoryById(item.categoryId)||{icon:"📦",name:item.category||"Otros",color:"#64748b"};
       const added=recurringAddedToMonth(item.id,month);
-      if(recurringBatchMode){
-        const checked=recurringBatchSelection.has(item.id);
-        const amount=Number(recurringBatchAmounts.get(item.id)??item.amount??0);
+
+      if(!recurringBatchMode){
         return `
-        <div class="recurring-item recurring-batch-item ${checked?"":"is-unselected"}">
-          <div class="recurring-batch-check"><input class="recurring-batch-checkbox" type="checkbox" data-id="${item.id}" ${checked?"checked":""}></div>
+        <div class="recurring-item">
           <div class="recurring-main">
             <div class="recurring-name" title="${escapeHtml(item.description)}">${escapeHtml(item.description)}</div>
             <div class="recurring-category"><span class="category-dot" style="background:${category.color}"></span> ${escapeHtml(category.icon)} ${escapeHtml(category.name)}</div>
             ${item.paymentMethod==="card"?`<div class="recurring-category">💳 ${escapeHtml(creditCards.find(c=>c.id===item.cardId)?.name||"Tarjeta no disponible")}</div>`:""}
-            ${added?`<span class="recurring-added">✓ Ya agregado a ${monthLabel(month)} · podés volver a agregarlo</span>`:""}
+            ${added?`<span class="recurring-added">✓ Agregado a ${monthLabel(month)}</span>`:""}
           </div>
-          <div class="recurring-batch-amount">
-            <label>Importe para ${monthLabel(month)}</label>
-            <input class="recurring-batch-amount-input" data-id="${item.id}" type="number" min="0.01" step="0.01" value="${amount}" ${checked?"":"disabled"}>
+          <div class="recurring-amount">${currencyMoney(item.amount,recurringBatchCurrency(item))}</div>
+          <div class="recurring-actions">
+            <details class="actions-menu movement-row-actions recurring-row-actions">
+              <summary title="Acciones" aria-label="Acciones">⋯</summary>
+              <div class="actions-popover">
+                <button class="menu-action" type="button" onclick="recurringApp.addToMonth('${item.id}')">＋ <span><strong>Agregar al mes</strong></span></button>
+                <button class="menu-action" type="button" onclick="recurringApp.edit('${item.id}')">✎ <span><strong>Editar</strong></span></button>
+                <button class="menu-action danger-menu-action" type="button" onclick="recurringApp.remove('${item.id}')">🗑 <span><strong>Eliminar</strong></span></button>
+              </div>
+            </details>
           </div>
         </div>`;
       }
+
+      const checked=recurringBatchSelection.has(item.id);
+      const amount=Number(recurringBatchAmounts.get(item.id) ?? item.amount ?? 0);
       return `
-      <div class="recurring-item">
+      <div class="recurring-item recurring-batch-item ${checked?"":"is-unselected"}">
+        <div class="recurring-batch-check">
+          <input class="recurring-batch-checkbox" type="checkbox" data-id="${item.id}" ${checked?"checked":""} aria-label="Seleccionar ${escapeHtml(item.description)}">
+        </div>
         <div class="recurring-main">
           <div class="recurring-name" title="${escapeHtml(item.description)}">${escapeHtml(item.description)}</div>
           <div class="recurring-category"><span class="category-dot" style="background:${category.color}"></span> ${escapeHtml(category.icon)} ${escapeHtml(category.name)}</div>
-          ${item.paymentMethod==="card"?`<div class="recurring-category">💳 ${escapeHtml(creditCards.find(c=>c.id===item.cardId)?.name||"Tarjeta no disponible")}</div>`:""}${added?`<span class="recurring-added">✓ Agregado a ${monthLabel(month)}</span>`:""}
+          ${item.paymentMethod==="card"?`<div class="recurring-category">💳 ${escapeHtml(creditCards.find(c=>c.id===item.cardId)?.name||"Tarjeta no disponible")}</div>`:""}
+          ${added?`<span class="recurring-added">✓ Ya agregado a ${monthLabel(month)}</span>`:""}
         </div>
-        <div class="recurring-amount">${money(item.amount)}</div>
-        <div class="recurring-actions">
-          <details class="actions-menu movement-row-actions recurring-row-actions">
-            <summary title="Acciones" aria-label="Acciones">⋯</summary>
-            <div class="actions-popover">
-              <button class="menu-action" type="button" onclick="recurringApp.addToMonth('${item.id}')">＋ <span><strong>Agregar al mes</strong></span></button>
-              <button class="menu-action" type="button" onclick="recurringApp.edit('${item.id}')">✎ <span><strong>Editar</strong></span></button>
-              <button class="menu-action danger-menu-action" type="button" onclick="recurringApp.remove('${item.id}')">🗑 <span><strong>Eliminar</strong></span></button>
-            </div>
-          </details>
+        <div class="recurring-batch-amount">
+          <label>Importe para ${monthLabel(month)}</label>
+          <input class="recurring-batch-amount-input" data-id="${item.id}" type="number" min="0.01" step="0.01" value="${amount}" ${checked?"":"disabled"}>
         </div>
       </div>`;
     }).join("");
+
     $("recurringEmpty").hidden=items.length>0;
+
     if(recurringBatchMode){
-      document.querySelectorAll(".recurring-batch-checkbox").forEach(el=>el.addEventListener("change",e=>{
-        const id=e.target.dataset.id;
-        if(e.target.checked)recurringBatchSelection.add(id);else recurringBatchSelection.delete(id);
-        renderRecurring();
-      }));
-      document.querySelectorAll(".recurring-batch-amount-input").forEach(el=>el.addEventListener("input",e=>{
-        recurringBatchAmounts.set(e.target.dataset.id,Number(e.target.value||0));
-        updateRecurringBatchSummary();
-      }));
+      document.querySelectorAll(".recurring-batch-checkbox").forEach(el=>{
+        el.addEventListener("change",e=>{
+          const id=e.target.dataset.id;
+          if(e.target.checked)recurringBatchSelection.add(id);
+          else recurringBatchSelection.delete(id);
+          renderRecurring();
+        });
+      });
+
+      document.querySelectorAll(".recurring-batch-amount-input").forEach(el=>{
+        el.addEventListener("input",e=>{
+          recurringBatchAmounts.set(e.target.dataset.id,Number(e.target.value||0));
+          updateRecurringBatchSummary();
+        });
+      });
+
       updateRecurringBatchSummary();
     }
   }
@@ -3018,9 +3041,9 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
   }
 
   $("startRecurringBatchBtn").addEventListener("click",()=>{
-    recurringBatchMode=true;
     recurringBatchSelection=new Set(recurringExpenses.map(x=>x.id));
     recurringBatchAmounts=new Map(recurringExpenses.map(x=>[x.id,Number(x.amount||0)]));
+    recurringBatchMode=true;
     renderRecurring();
   });
   $("selectAllRecurringBatchBtn").addEventListener("click",()=>{recurringBatchSelection=new Set(recurringExpenses.map(x=>x.id));renderRecurring()});
