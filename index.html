@@ -909,7 +909,9 @@
           </label>
           <div class="recurring-payment-fields">
             <label>Se paga con<select id="recurringPaymentMethod"><option value="cash">Efectivo / Débito / Transferencia</option><option value="card">Débito automático en tarjeta</option></select></label>
+            <label id="recurringAccountRow">Cuenta<select id="recurringAccount"></select></label>
             <label id="recurringCardRow" hidden>Tarjeta<select id="recurringCard"></select></label>
+            <label>Día del mes<input id="recurringDay" type="number" min="1" max="28" step="1" value="1" required /></label>
           </div>
           <button class="btn btn-primary full" type="submit" id="saveRecurringBtn">Guardar recurrente</button>
           <button class="btn full" type="button" id="cancelRecurringEditBtn" hidden>Cancelar edición</button>
@@ -1230,7 +1232,7 @@
 
 <script type="module">
 import { supabase, hasSupabaseConfig } from "./src/supabase.js";
-  const PANORAMA_BUILD="Cloud 0.4.7.2 · Fix guardado de movimientos";
+  const PANORAMA_BUILD="Cloud 0.4.7.6 · Recurrentes con destino y día";
 
 (async () => {
   // Panorama Cloud 0.4: Supabase is the only persistent data store.
@@ -1929,7 +1931,9 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
   function normalizeRecurring(item){
     const fallback=categories.find(c=>c.type==="expense"&&c.id==="exp-otros")||categories.find(c=>c.type==="expense");
     const category=categoryById(item.categoryId)||categories.find(c=>c.type==="expense"&&c.name===item.category)||fallback;
-    return {...item,amount:Number(item.amount||0),categoryId:category?.id||"",category:category?.name||"Otros"};
+    const paymentMethod=item.paymentMethod||"cash";
+    const fallbackAccount=defaultAccount();
+    return {...item,amount:Number(item.amount||0),categoryId:category?.id||"",category:category?.name||"Otros",paymentMethod,accountId:paymentMethod==="card"?"":(item.accountId||fallbackAccount?.id||""),day:Math.min(28,Math.max(1,Number(item.day||1)))};
   }
   function saveRecurring(){
     return queueCloudWrite("recurrentes",persistRecurringCloud);
@@ -2773,7 +2777,15 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
     }
   };
 
-  function updateRecurringPaymentFields(){if(!$("recurringPaymentMethod"))return;const isCard=$("recurringPaymentMethod").value==="card";$("recurringCardRow").hidden=!isCard;$("recurringCard").innerHTML=creditCards.length?creditCards.map(c=>`<option value="${c.id}">${escapeHtml(c.name)} · ${escapeHtml(c.bank)}</option>`).join(""):`<option value="">Primero creá una tarjeta</option>`}
+  function updateRecurringPaymentFields(){
+    if(!$("recurringPaymentMethod"))return;
+    const isCard=$("recurringPaymentMethod").value==="card";
+    $("recurringCardRow").hidden=!isCard;
+    $("recurringAccountRow").hidden=isCard;
+    $("recurringCard").innerHTML=creditCards.length?creditCards.map(c=>`<option value="${c.id}">${escapeHtml(c.name)} · ${escapeHtml(c.bank)}</option>`).join(""):`<option value="">Primero creá una tarjeta</option>`;
+    $("recurringAccount").innerHTML=accounts.length?accounts.map(a=>`<option value="${a.id}">${escapeHtml(a.name)}${a.bank?` · ${escapeHtml(a.bank)}`:""} · ${escapeHtml(a.currency)}</option>`).join(""):`<option value="">Primero creá una cuenta</option>`;
+    if(!isCard&&!$("recurringAccount").value&&defaultAccount())$("recurringAccount").value=defaultAccount().id;
+  }
 
   function recurringAddedToMonth(itemId,month){
     return movements.some(m=>m.sourceRecurringId===itemId&&((m.purchaseDate||m.date||"").slice(0,7)===month));
@@ -2781,7 +2793,17 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
 
   function recurringBatchCurrency(item){
     if(item.paymentMethod==="card")return cardById(item.cardId)?.currency||"UYU";
-    return defaultAccount()?.currency||"UYU";
+    return accountById(item.accountId)?.currency||defaultAccount()?.currency||"UYU";
+  }
+
+  function recurringDestinationMeta(item){
+    const day=Math.min(28,Math.max(1,Number(item.day||1)));
+    if(item.paymentMethod==="card"){
+      const card=cardById(item.cardId);
+      return `💳 ${escapeHtml(card?.name||"Tarjeta no disponible")}${card?.bank?` · ${escapeHtml(card.bank)}`:""} · 📅 Día ${day}`;
+    }
+    const account=accountById(item.accountId)||defaultAccount();
+    return `🏦 ${escapeHtml(account?.name||"Cuenta no disponible")}${account?.bank?` · ${escapeHtml(account.bank)}`:""} · 📅 Día ${day}`;
   }
 
   function updateRecurringBatchSummary(){
@@ -2823,8 +2845,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
         <div class="recurring-item">
           <div class="recurring-main">
             <div class="recurring-name" title="${escapeHtml(item.description)}">${escapeHtml(item.description)}</div>
-            <div class="recurring-category"><span class="category-dot" style="background:${category.color}"></span> ${escapeHtml(category.icon)} ${escapeHtml(category.name)}</div>
-            ${item.paymentMethod==="card"?`<div class="recurring-category">💳 ${escapeHtml(creditCards.find(c=>c.id===item.cardId)?.name||"Tarjeta no disponible")}</div>`:""}
+            <div class="recurring-category"><span class="category-dot" style="background:${category.color}"></span> ${escapeHtml(category.icon)} ${escapeHtml(category.name)} · ${recurringDestinationMeta(item)}</div>
             ${added?`<span class="recurring-added">✓ Agregado a ${monthLabel(month)}</span>`:""}
           </div>
           <div class="recurring-amount">${currencyMoney(item.amount,recurringBatchCurrency(item))}</div>
@@ -2850,8 +2871,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
         </div>
         <div class="recurring-main">
           <div class="recurring-name" title="${escapeHtml(item.description)}">${escapeHtml(item.description)}</div>
-          <div class="recurring-category"><span class="category-dot" style="background:${category.color}"></span> ${escapeHtml(category.icon)} ${escapeHtml(category.name)}</div>
-          ${item.paymentMethod==="card"?`<div class="recurring-category">💳 ${escapeHtml(creditCards.find(c=>c.id===item.cardId)?.name||"Tarjeta no disponible")}</div>`:""}
+          <div class="recurring-category"><span class="category-dot" style="background:${category.color}"></span> ${escapeHtml(category.icon)} ${escapeHtml(category.name)} · ${recurringDestinationMeta(item)}</div>
           ${added?`<span class="recurring-added">✓ Ya agregado a ${monthLabel(month)}</span>`:""}
         </div>
         <div class="recurring-batch-amount">
@@ -2890,7 +2910,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
     $("saveRecurringBtn").textContent="Guardar recurrente";
     $("cancelRecurringEditBtn").hidden=true;
     updateRecurringCategories();
-    $("recurringPaymentMethod").value="cash";updateRecurringPaymentFields();
+    $("recurringPaymentMethod").value="cash";updateRecurringPaymentFields();$("recurringDay").value="1";if(defaultAccount())$("recurringAccount").value=defaultAccount().id;
   }
 
   function renderCategories(monthData){
@@ -3024,12 +3044,15 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
     if(!(amount>0))throw new Error(`Indicá un importe válido para “${item.description}”.`);
     if(item.paymentMethod==="card"){
       if(!item.cardId||!creditCards.some(c=>c.id===item.cardId))throw new Error(`Seleccioná una tarjeta válida para “${item.description}”.`);
-      const purchaseDate=`${month}-01`,billingMonth=billingMonthForPurchase(cardById(item.cardId),purchaseDate);
+      const day=String(Math.min(28,Math.max(1,Number(item.day||1)))).padStart(2,"0");
+      const purchaseDate=`${month}-${day}`,billingMonth=billingMonthForPurchase(cardById(item.cardId),purchaseDate);
       return createCardMovement({cardId:item.cardId,description:item.description,amount,billingMonth,purchaseDate,origin:"recurring",sourceRecurringId:item.id,categoryId:item.categoryId});
     }
     const category=categoryById(item.categoryId)||categories.find(c=>c.type==="expense");
-    const account=defaultAccount();
-    return {id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),type:"expense",description:item.description,amount,date:`${month}-01`,categoryId:category?.id||"",category:category?.name||item.category||"Otros",paid:false,complete:false,paidAmount:0,accountId:account?.id||"",currency:account?.currency||"UYU",paymentMethod:"account",carriedTo:[],sourceRecurringId:item.id};
+    const account=accountById(item.accountId)||defaultAccount();
+    if(!account)throw new Error(`Seleccioná una cuenta válida para “${item.description}”.`);
+    const day=String(Math.min(28,Math.max(1,Number(item.day||1)))).padStart(2,"0");
+    return {id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),type:"expense",description:item.description,amount,date:`${month}-${day}`,categoryId:category?.id||"",category:category?.name||item.category||"Otros",paid:false,complete:false,paidAmount:0,accountId:account.id,currency:account.currency||"UYU",paymentMethod:"account",carriedTo:[],sourceRecurringId:item.id};
   }
 
   function stopRecurringBatch(){
@@ -3084,7 +3107,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       $("recurringDescription").value=item.description;
       $("recurringAmount").value=item.amount;
       updateRecurringCategories(item.categoryId);
-      $("recurringPaymentMethod").value=item.paymentMethod||"cash";updateRecurringPaymentFields();if(item.cardId)$("recurringCard").value=item.cardId;
+      $("recurringPaymentMethod").value=item.paymentMethod||"cash";updateRecurringPaymentFields();if(item.cardId)$("recurringCard").value=item.cardId;if(item.accountId)$("recurringAccount").value=item.accountId;$("recurringDay").value=Math.min(28,Math.max(1,Number(item.day||1)));
       $("recurringFormTitle").textContent="Editar gasto recurrente";
       $("saveRecurringBtn").textContent="Guardar cambios";
       $("cancelRecurringEditBtn").hidden=false;
@@ -3513,6 +3536,9 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
 
   $("recurringForm").addEventListener("submit",e=>{
     e.preventDefault();
+    const paymentMethod=$("recurringPaymentMethod").value;
+    if(paymentMethod==="card"&&!$("recurringCard").value){alert("Seleccioná una tarjeta para este recurrente.");return}
+    if(paymentMethod!=="card"&&!$("recurringAccount").value){alert("Seleccioná una cuenta para este recurrente.");return}
     const id=$("recurringEditId").value;
     const item={
       id:id||(crypto.randomUUID?crypto.randomUUID():String(Date.now())),
@@ -3521,7 +3547,9 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       categoryId:$("recurringCategory").value,
       category:categoryById($("recurringCategory").value)?.name||"Otros",
       paymentMethod:$("recurringPaymentMethod").value,
-      cardId:$("recurringPaymentMethod").value==="card"?$("recurringCard").value:""
+      cardId:$("recurringPaymentMethod").value==="card"?$("recurringCard").value:"",
+      accountId:$("recurringPaymentMethod").value==="card"?"":$("recurringAccount").value,
+      day:Math.min(28,Math.max(1,Number($("recurringDay").value||1)))
     };
 
     recurringExpenses=id
