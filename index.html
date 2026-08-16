@@ -439,7 +439,7 @@
     .card-activity-empty{padding:10px 0;color:var(--muted);font-size:.86rem}
     .card-next-total{margin-top:10px;padding-top:12px;border-top:1px solid var(--line)}
     .recurring-payment-fields{display:grid;gap:12px}
-    #recurringCardRow[hidden]{display:none!important}
+    #recurringCardRow[hidden],#recurringAccountRow[hidden]{display:none!important}
 
     .card-activity-row{align-items:center}
     .card-activity-value{display:inline-flex;align-items:center;gap:10px}
@@ -900,7 +900,7 @@
             <input id="recurringDescription" maxlength="80" required placeholder="Ej.: Netflix, ChatGPT, HBO Max..." />
           </label>
           <label>
-            Importe
+            <span>Importe <span id="recurringAmountCurrency" class="hint" style="display:inline;margin-left:6px">UYU</span></span>
             <input id="recurringAmount" type="number" min="0.01" step="0.01" required placeholder="0,00" />
           </label>
           <label>
@@ -2777,14 +2777,26 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
     }
   };
 
+  function updateRecurringAmountCurrency(){
+    if(!$("recurringAmountCurrency"))return;
+    const isCard=$("recurringPaymentMethod").value==="card";
+    const currency=isCard?(cardById($("recurringCard").value)?.currency||"UYU"):(accountById($("recurringAccount").value)?.currency||"UYU");
+    $("recurringAmountCurrency").textContent=currency;
+  }
+
   function updateRecurringPaymentFields(){
     if(!$("recurringPaymentMethod"))return;
     const isCard=$("recurringPaymentMethod").value==="card";
+    const previousCard=$("recurringCard").value;
+    const previousAccount=$("recurringAccount").value;
     $("recurringCardRow").hidden=!isCard;
     $("recurringAccountRow").hidden=isCard;
-    $("recurringCard").innerHTML=creditCards.length?creditCards.map(c=>`<option value="${c.id}">${escapeHtml(c.name)} · ${escapeHtml(c.bank)}</option>`).join(""):`<option value="">Primero creá una tarjeta</option>`;
+    $("recurringCard").innerHTML=creditCards.length?creditCards.map(c=>`<option value="${c.id}">${escapeHtml(c.name)} · ${escapeHtml(c.bank)} · ${escapeHtml(c.currency||"UYU")}</option>`).join(""):`<option value="">Primero creá una tarjeta</option>`;
     $("recurringAccount").innerHTML=accounts.length?accounts.map(a=>`<option value="${a.id}">${escapeHtml(a.name)}${a.bank?` · ${escapeHtml(a.bank)}`:""} · ${escapeHtml(a.currency)}</option>`).join(""):`<option value="">Primero creá una cuenta</option>`;
+    if(previousCard&&creditCards.some(c=>c.id===previousCard))$("recurringCard").value=previousCard;
+    if(previousAccount&&accounts.some(a=>a.id===previousAccount))$("recurringAccount").value=previousAccount;
     if(!isCard&&!$("recurringAccount").value&&defaultAccount())$("recurringAccount").value=defaultAccount().id;
+    updateRecurringAmountCurrency();
   }
 
   function recurringAddedToMonth(itemId,month){
@@ -3107,7 +3119,7 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       $("recurringDescription").value=item.description;
       $("recurringAmount").value=item.amount;
       updateRecurringCategories(item.categoryId);
-      $("recurringPaymentMethod").value=item.paymentMethod||"cash";updateRecurringPaymentFields();if(item.cardId)$("recurringCard").value=item.cardId;if(item.accountId)$("recurringAccount").value=item.accountId;$("recurringDay").value=Math.min(28,Math.max(1,Number(item.day||1)));
+      $("recurringPaymentMethod").value=item.paymentMethod||"cash";updateRecurringPaymentFields();if(item.cardId)$("recurringCard").value=item.cardId;if(item.accountId)$("recurringAccount").value=item.accountId;updateRecurringAmountCurrency();$("recurringDay").value=Math.min(28,Math.max(1,Number(item.day||1)));
       $("recurringFormTitle").textContent="Editar gasto recurrente";
       $("saveRecurringBtn").textContent="Guardar cambios";
       $("cancelRecurringEditBtn").hidden=false;
@@ -3564,6 +3576,8 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
 
   $("cancelRecurringEditBtn").addEventListener("click",resetRecurringForm);
   $("recurringPaymentMethod").addEventListener("change",updateRecurringPaymentFields);
+  $("recurringCard").addEventListener("change",updateRecurringAmountCurrency);
+  $("recurringAccount").addEventListener("change",updateRecurringAmountCurrency);
 
   $("selectAllVisible").addEventListener("change",()=>{
     const visibleChecks=[...document.querySelectorAll(".row-selector")];
