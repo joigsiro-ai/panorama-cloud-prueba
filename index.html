@@ -2139,13 +2139,9 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       const badge=st==="paid"?"badge-paid":st==="partial"?"badge-partial":"badge-pending";
       const label=st==="paid"?"Pagado":st==="partial"?"Pago parcial":"Pendiente";
       const pending=isIncome?0:Math.max(0,m.amount-m.paidAmount);
-      const accountGrouped=extraClass.includes("account-child-row");
-      const accountIncoming=isIncome?Number(m.amount||0):0;
-      const accountOutgoing=!isIncome?Number(m.paidAmount||0):0;
-      const accountNet=roundMoney(accountIncoming-accountOutgoing);
-      const moneyCells=accountGrouped
-        ? `<td class="amount">${currencyMoney(accountIncoming,m.currency)}</td><td class="amount">${currencyMoney(accountOutgoing,m.currency)}</td><td class="amount ${accountNet>0?"positive":accountNet<0?"negative":""}">${accountNet>0?"+":""}${currencyMoney(accountNet,m.currency)}</td>`
-        : `<td class="amount">${currencyMoney(m.amount,m.currency)}</td><td class="amount">${currencyMoney(m.paidAmount,m.currency)}</td><td class="amount">${currencyMoney(pending,m.currency)}</td>`;
+      // Agrupar debe cambiar la organización visual, no el significado de las columnas.
+      // Incluso dentro de un grupo por cuenta, cada movimiento conserva Importe / Pagado / Pendiente.
+      const moneyCells=`<td class="amount">${currencyMoney(m.amount,m.currency)}</td><td class="amount">${currencyMoney(m.paidAmount,m.currency)}</td><td class="amount">${currencyMoney(pending,m.currency)}</td>`;
       return `<tr class="${st==="paid"&&!isIncome?"row-paid":""} ${extraClass}">
         <td><input class="row-selector" type="checkbox" data-id="${m.id}" ${selectedIds.has(m.id)?"checked":""}></td>
         <td>${prettyDate(m.date)}</td><td><div class="movement-description"><div class="movement-description-title">${escapeHtml(m.description)}</div><div class="movement-description-meta">${categoryMarkup(m)}</div></div></td>
