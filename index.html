@@ -2992,53 +2992,62 @@ import { supabase, hasSupabaseConfig } from "./src/supabase.js";
       const oldCardMovement=id?movements.find(m=>m.id===id):null;
       if(id){movements=movements.filter(m=>m.id!==id)}
       const purchaseMode=$("cardPurchaseMode").value;
-      const isInstallmentPurchase=purchaseMode==="installments";
-      if(purchaseMode==="single") {
-        movements.push(createCardMovement({id:id||undefined,cardId,description,amount,billingMonth,purchaseDate:$("date").value,origin:oldCardMovement?.origin||"normal",sourceRecurringId:oldCardMovement?.sourceRecurringId||"",categoryId}));
-      } else {
-        const count=Math.max(2,Number($("movementInstallmentCount").value||0));
+      let totalAmount=amount,installments=1;
+      if(purchaseMode==="installments"){
+        installments=Math.max(2,Number($("movementInstallmentCount").value||0));
         const inputMode=$("movementInstallmentInputMode").value||"total";
         const enteredAmount=Number((inputMode==="per_installment"?$("movementInstallmentAmount"):$("movementInstallmentTotal")).value||0);
         if(!enteredAmount){alert(inputMode==="per_installment"?"Indicá el importe por cuota.":"Indicá el importe total de la compra.");return}
-        const installmentAmount=roundMoney(inputMode==="per_installment"?enteredAmount:enteredAmount/count);
-        const totalPurchaseAmount=roundMoney(inputMode==="per_installment"?enteredAmount*count:enteredAmount);
-        const plan={id:uid("installment"),cardId,label:description||"Compra en cuotas",count,amount:installmentAmount,startMonth:billingMonth,purchaseDate:$("date").value,totalPurchaseAmount,inputMode,categoryId};
-        const generated=[];
-        for(let index=0;index<count;index++){
-          generated.push(createCardMovement({
-            cardId,description:`${plan.label} · cuota ${index+1}/${count}`,amount:installmentAmount,
-            billingMonth:addMonths(billingMonth,index),purchaseDate:plan.purchaseDate,origin:"installment",
-            installmentPlanId:plan.id,installmentNumber:index+1,installmentCount:count,categoryId
-          }));
-        }
-        const planRow=installmentToCloud(plan);delete planRow.user_id;
-        const movementRows=generated.map(m=>{const row=movementToCloud(m);delete row.user_id;return row});
-        $("saveBtn").disabled=true;$("saveBtn").textContent="Guardando…";
-        try{
-          await runAtomicOperation("agregar compra en cuotas",()=>supabase.rpc("panorama_save_installment_bundle",{
-            p_plan:planRow,p_movements:movementRows,p_replace_movement_id:id||null
-          }));
-          selectedCardId=cardId;$("monthFilter").value=billingMonth;
-          closeMovementDrawer();showScreen("cardsScreen");render();
-        }catch{
-          $("saveBtn").disabled=false;$("saveBtn").textContent="Guardar movimiento";
-        }
-        return;
+        totalAmount=roundMoney(inputMode==="per_installment"?enteredAmount*installments:enteredAmount);
       }
-      saveData();$("monthFilter").value=billingMonth;
-      render();closeMovementDrawer();
+      $("saveBtn").disabled=true;$("saveBtn").textContent="Guardando…";
+      try{
+        const result=await runAtomicOperation(
+          purchaseMode==="installments"?"agregar compra en cuotas":"agregar compra con tarjeta",
+          ()=>supabase.rpc("panorama_save_movement",{p_input:{
+            movement_id:id||null,
+            type:"expense",
+            payment_method:"card",
+            card_id:cardId,
+            category_id:categoryId,
+            description:description||null,
+            amount:totalAmount,
+            date:$("date").value,
+            installments
+          }})
+        );
+        selectedCardId=cardId;
+        $("monthFilter").value=result?.billing_month||billingMonth;
+        closeMovementDrawer();showScreen("cardsScreen");render();
+      }catch{
+        $("saveBtn").disabled=false;$("saveBtn").textContent="Guardar movimiento";
+      }
       return;
     }
     const old=id?movements.find(m=>m.id===id):null;
-    const movement={
-      id:id||(crypto.randomUUID?crypto.randomUUID():String(Date.now())),
-      type,description:$("description").value.trim(),amount,date:$("date").value,categoryId:$("category").value,category:categoryById($("category").value)?.name||"Sin categoría",
-      paid:type==="income"?true:paidAmount>0,complete:type==="income"?true:paidAmount>=amount,paidAmount,
-      accountId:$("movementAccount").value||defaultAccount()?.id||"",currency:accountById($("movementAccount").value)?.currency||"UYU",paymentMethod:"account",
-      carriedTo:old?.carriedTo||[]
-    };
-    movements=id?movements.map(m=>m.id===id?movement:m):[...movements,movement];
-    saveData();$("monthFilter").value=movement.date.slice(0,7);render();closeMovementDrawer();
+    const accountId=$("movementAccount").value||defaultAccount()?.id||"";
+    if(!accountId){alert("Seleccioná una cuenta.");return}
+    $("saveBtn").disabled=true;$("saveBtn").textContent="Guardando…";
+    try{
+      await runAtomicOperation("guardar movimiento",()=>supabase.rpc("panorama_save_movement",{p_input:{
+        movement_id:id||null,
+        type,
+        payment_method:"account",
+        account_id:accountId,
+        category_id:$("category").value||null,
+        description:$("description").value.trim()||null,
+        amount,
+        date:$("date").value,
+        paid:type==="income"?true:paidAmount>0,
+        complete:type==="income"?true:paidAmount>=amount,
+        paid_amount:paidAmount,
+        carried_to:old?.carriedTo||[]
+      }}));
+      $("monthFilter").value=$("date").value.slice(0,7);
+      closeMovementDrawer();render();
+    }catch{
+      $("saveBtn").disabled=false;$("saveBtn").textContent="Guardar movimiento";
+    }
   });
 
   function resetForm(){
